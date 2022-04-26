@@ -1,0 +1,126 @@
+html, body {touch-action: none;}
+
+body {
+    background: #111;
+    overflow: hidden;
+    color: white;
+    touch-action: none;
+    margin: 0;
+    padding:0;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    height: 100%;
+    font-family: sans-serif;
+}
+
+#hidden-canvas {
+    z-index: -2;
+    position: absolute;
+    background-color: transparent;
+    touch-action: none;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+#canvas {
+    z-index: -1;
+    position: absolute;
+    background-color: transparent;
+    touch-action: none;
+}
+
+canvas[resize] {
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+#start-button {
+  font-size: 24px;
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  text-align:center;
+  line-height: 100vh;
+  vertical-align: middle;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+#gui {
+    position:absolute;
+    max-height: 100%;
+    width: 48px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    height:auto;
+
+    background:#222;
+    display:flex;
+    flex-direction: column;
+    user-select: none;
+    -webkit-user-select: none;
+    overflow: hidden;
+    padding:8px;
+    touch-action: none;
+}
+
+.button {
+    display:block;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background: grey;
+    opacity: 0.8;
+    user-select: none;
+    -webkit-user-select: none;
+    text-align: center;
+    line-height: 48px;
+}
+
+.button.active {
+    opacity: 1;
+}
+
+#drop-area {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+}
+#drop-area:hover {
+    border: 4px dashed red;
+}
+
+#filelist {
+    position: absolute;
+    top: 3rem;
+    left: 3rem;
+    right: 3rem;
+    bottom: 3rem;
+    background: red;
+    opacity: 0.5;
+    padding: 1rem;
+    touch-action: none;
+}
+
+#filelist svg {
+    width: 20%;
+    height: auto;
+    display:inline-block;
+    border: 1px solid cyan;
+    box-sizing: border-box;
+    margin: 1rem;
+}
+
+.hidden {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    visibility:hidden;
+}

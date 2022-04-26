@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "eiows": "^4.0.1",
+    "express": "^4.17.2",
+    "https": "^1.0.0",
+    "midi": "^2.0.0",
+    "minimist": "^1.2.6",
+    "osc": "^2.4.2",
+    "ws": "^8.5.0"
+  },
+  "name": "dimsyn",
+  "version": "0.0.1",
+  "description": "browser-based tool for expressive sound synthesis and composition",
+  "server": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eero Pitkänen",
+  "license": "ISC"
+}
