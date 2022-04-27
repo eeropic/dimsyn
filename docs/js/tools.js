@@ -65,7 +65,9 @@ drawTool.on({
         if(e.event.pointerType == "pen" || e.event.pointerType == "mouse"){
             let tiltX = e.event.tiltX || 0
             let tiltY = e.event.tiltY || 0
-            let valZ = e.event.pressure || drawTool.webkitForce % 1 || 1
+            let valZ = e.event.pressure || drawTool.webkitForce % 1 || e.delta.length / 10;
+            if(valZ == 0.5)
+                valZ = e.delta.length / 10
             let valX = Math.abs(tiltX / 90)
             let valY = Math.abs(tiltY / 90)
             if(this.path)
