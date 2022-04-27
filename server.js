@@ -1,5 +1,5 @@
-const args = require("minimist")(process.argv);
-const port = 0 | args.p || 3000;
+var args = process.argv.slice(2);
+const port = 0 | args[0] || 3000;
 
 const os = require('os');
 const osc = require('osc');
@@ -29,7 +29,7 @@ wss.on('connection', ws => {
   //ws.send('Hello! Message From Server!!')
 })
 
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(__dirname + '/docs'))
 
 server.listen(port);
 

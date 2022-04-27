@@ -1,10 +1,8 @@
 {
   "dependencies": {
-    "eiows": "^4.0.1",
     "express": "^4.17.2",
     "https": "^1.0.0",
     "midi": "^2.0.0",
-    "minimist": "^1.2.6",
     "osc": "^2.4.2",
     "ws": "^8.5.0"
   },
