@@ -4,6 +4,8 @@ pianoKeys = [1,0,1,0,1,1,0,1,0,1,0,1]
 
 let noteLineCount = Math.floor(view.viewSize.height / yPixelScale)
 
+let noteLines = []
+
 for(let i = 0; i < noteLineCount; i++){
     if(pianoKeys[i%12]){
         let yCoord = view.viewSize.height - i*yPixelScale - yPixelScale/2
@@ -13,8 +15,10 @@ for(let i = 0; i < noteLineCount; i++){
             strokeColor: '#181818',
             segments:[[0,yCoord],[view.viewSize.width, yCoord]],
         })
+        noteLines.push(noteLinePath)
     }
 }
+drawTool.noteLines = new Group(noteLines)
 
 drawTool.touchPath = createTouchPath(0)
 /*
@@ -67,14 +71,64 @@ function dlog(msg){
 window.addEventListener("beforeunload", function(event) {
     //window.localStorage.setItem('dimsyn', JSON.stringify(exportProject()));
 });
+/*
+canvas.addEventListener('wheel', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    var e = event.originalEvent,
+        view = scope.view,
+        offset = canvas.offset(),
+        point = view.viewToProject(
+            paper.DomEvent.getPoint(e).subtract(offset.left, offset.top)
+        ), 
+        delta = e.deltaY || 0,
+        scale = 1 - delta / 100;
+    view.scale(scale, point);
+    console.log('wheeellll')
+    return false;
+});
+*/
+
+const getElementOffset = elem => {
+    let rect = elem.getBoundingClientRect();
+    var offset = { 
+        top: rect.top + window.scrollY, 
+        left: rect.left + window.scrollX, 
+    };
+    return offset
+}
+
+
+window.addEventListener('wheel', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    if(!event.shiftKey && !event.ctrlKey){
+        drawTool.prevPosition = drawTool.playPosition
+        drawTool.playPosition = (drawTool.playPosition + event.deltaX / 2).mod(1280)
+    }
+	else if(event.shiftKey && !event.ctrlKey) {
+        view.translate(-event.deltaX, -event.deltaY)
+    }
+    else if (!event.shiftKey && event.ctrlKey){
+        let offset = getElementOffset(canvas),
+        point = view.viewToProject(
+            new Point(event.offsetX, event.offsetY).subtract(offset.left, offset.top)
+        ),
+        delta = event.deltaY || 0,
+        scale = 1 - delta / 100;
+        view.scale(scale, point);
+	}
+}, {passive: false})
+
 
 
 //addEl(['scroll'])
 let touchIDs = {}
 
 document.getElementById("start-button").onclick = e => {
+    console.log('init audio context')
     initAudioContext()
-    e.target.style.display = "none"
+    document.getElementById("start-button").style.display = "none"
 }
 
 //document.getElementById("start-button").style.display = "none"
@@ -557,146 +611,12 @@ drawTool.drawTouches = function(){
 }
 
 
-function intersectItem(touchPath,item,intersectionCount, pressure){
-    pressure = pressure || 1
-    let osc = item.data.osc
-    intersectionCount += 1;
-    let touchScale = drawTool.touchScale || 1
-    //touchScale = 1 * pressure
-    //console.log(pressure)
-    //let pitchBend = drawTool.touchDelta && drawTool.touches.length == 3 ? drawTool.touchDelta.y / yPixelScale : 0
-    let pitchBend = 0
-    let intersections = item.getIntersections(touchPath)
-    let ampScale = item.strokeWidth / yPixelScale;
 
-    if(item.strokeColor.gradient){
-        //let xNorm = item.getNormalizedX(intersections[0].point.x)
-        let gradTime = getTimeForProjectedPoint(item.strokeColor.origin, item.strokeColor.destination, intersections[0].point)
-        col = item.getGradientColorAtX(clamp(gradTime,0,1))
-    }
-    else col = item.strokeColor
-
-
-    let yCoord = view.viewSize.height - intersections[0].point.y
-    let curvature = clamp(Math.max(0.5, col.red), 0.5, 0.99);
-    let midpoint = clamp(0.5 - (col.green / 2), 0.05, 1);
-    let noise = clamp(col.red+col.green+col.blue-2,0,1)
-    let resonance = 1-noise
-    //let pan = 0.5 - (intersections[0].point.y / view.viewSize.height)
-    //let firstItem = 
-    //let pan = (item.index / project.getItems({guide: false,className: "Path"}).length -2) * 2 - 1
-    let pan = 0;
-    let alpha = col.alpha || 1
-    const amp = clamp(ampScale * touchScale * alpha / (intersectionCount * 2),0,1)
-    let frequency = noteToFrequency(yCoord / yPixelScale + noteOffset + pitchBend); 
-    setOscillatorParams({osc, context: audioCtx, amp, pan, frequency, midpoint, curvature, noise, resonance})
-    //let ampVal = (col.alpha * Math.min(0.8,deltaPos.length/100)) / intersectionCount;
-}
-
-function intersectSymbolItem(touchPath,item,intersectionCount, pressure, instance){
-    pressure = pressure || 1
-    let osc = item.data.osc
-    intersectionCount += 1;
-    let touchScale = drawTool.touchScale || 1
-    let intersections = touchPath.getIntersections(item, x => true, instance.matrix)
-    if(intersections.length){
-        let ampScale = item.strokeWidth / yPixelScale;
-        let pt = touchPath.localToGlobal(intersections[0].point)
-        let gradPt = instance.globalToLocal(pt)
-        if(item.strokeColor.gradient){
-            let gradTime = getTimeForProjectedPoint(item.strokeColor.origin, item.strokeColor.destination, gradPt)
-            col = item.getGradientColorAtX(clamp(gradTime,0,1))
-        }
-        else col = item.strokeColor
-
-
-
-        let yCoord = view.viewSize.height - intersections[0].point.y
-        let curvature = clamp(Math.max(0.5, col.red), 0.5, 0.99);
-        let midpoint = clamp(0.5 - (col.green / 2), 0.05, 1);
-        let noise = clamp(col.red+col.green+col.blue-2,0,1)
-        let resonance = 1-noise
-        //let pan = item.index / project.getItems({guide: false,className: "Path"}).length * 2 - 1
-        let pan = 0
-        let alpha = col.alpha || 1
-        const amp = clamp(ampScale * touchScale * alpha / (intersectionCount * 2),0,1)
-        let frequency = noteToFrequency(yCoord / yPixelScale + noteOffset);
-        setOscillatorParams({osc, context: audioCtx, amp, pan, frequency, midpoint, curvature, noise, resonance})
-    }
-}
-
+view.autoUpdate = false
 view.onFrame = function(e){
-    
-    if(project.selectedItems.length == 0){
-        if(drawTool.touches.length >= 2){
-            drawTool.touchesCenter = drawTool.touches.reduce( 
-                (prev,curr) => {
-                    return {
-                        point: prev.point.add(curr.point)
-                    }
-                },
-                {
-                    point: new Point(0,0)
-                }
-            ).point.divide(drawTool.touches.length)
-            drawTool.touchPath.segments = drawTool.touches.map(x => x.point.subtract(drawTool.touchesCenter))
-        }
-        else {
-            drawTool.touchPath.segments = [new Point(0,0), new Point(0,view.viewSize.height)]
-            drawTool.touchesCenter = [0,0]
-        }
-
-        if(drawTool.playing){
-            drawTool.playPosition+=5;
-            drawTool.touchPath.position.x = drawTool.playPosition % 1280
-            drawTool.touchPath.position.y = view.center.y
-        }
-        if(drawTool.touches.length>=2){
-            drawTool.playPosition = drawTool.touchesCenter.x
-            drawTool.touchPath.position = drawTool.touchesCenter
-        }
-        let items = project.getItems({guide: false,className: "Path",})
-        let intersectionCount = 0
-        items.forEach(item => {
-            let osc = item.data.osc
-            let intersects = item.intersects(drawTool.touchPath)
-
-            if(intersects){
-                intersectionCount++
-                intersectItem(drawTool.touchPath, item, intersectionCount)
-            }
-            else {
-                let amp = osc.parameters.get("amp")
-                amp.linearRampToValueAtTime(0,audioCtx.currentTime+0.02)
-            }
-        })
-
-        let symbolItems = project.getItems({guide: false, className: "SymbolItem"})
-        symbolItems.forEach(item => {
-            let intersects = drawTool.touchPath.intersects(item)
-            if(intersects){
-                intersectionCount++
-                let childItems = item.definition.item.getItems({className: "Path"})
-                if(item.definition.item.data.players.indexOf(item.id) == -1)
-                    item.definition.item.data.players.push(item.id)
-
-                childItems.forEach(childItem => {
-                    intersectSymbolItem(drawTool.touchPath, childItem, intersectionCount, 1, item) 
-                })
-                //intersectItem(drawTool.touchPaths[0], item, intersectionCount, (drawTool.touches[0].pressure + drawTool.touches[1].pressure) / 1000)
-            }
-            else {
-                item.definition.item.data.players = item.definition.item.data.players.filter(id => id != item.id)
-                if(item.definition.item.data.players.length == 0){
-                    let childItems = item.definition.item.getItems({className: "Path"})
-                    childItems.forEach(childItem => {
-                        let amp = childItem.data.osc.parameters.get("amp")
-                        amp.linearRampToValueAtTime(0,audioCtx.currentTime+0.02)
-                    })
-                }
-            }
-        })
-
+    if(e.count % 10 == 0){
+        //console.log(activeIDs)
+        //console.log(oscArray)
     }
 
 }

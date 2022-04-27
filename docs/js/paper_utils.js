@@ -5,6 +5,10 @@ const lerp = (v0, v1, t) => v0 * (1 - t) + v1 * t;
 
 const lerpPoints = (pt0, pt1, t) => new Point(lerp(pt0.x, pt1.x, t), lerp(pt0.y,pt1.y,t))
 
+Number.prototype.mod = function (n) {
+    return ((this % n) + n) % n;
+};
+
 Color.prototype.lerpGradientPosition = function(t){
     return new Point(
         lerp(this.origin.x, this.destination.x, t),
@@ -217,18 +221,9 @@ function importSVGCB(svgString){
             let childItems = item.definition.item.getItems({className: "Path"})
             item.definition.item.data = {}
             item.definition.item.data.players = []
-            childItems.forEach(childItem => {
-                if(typeof childItem.data.osc == 'undefined'){
-                    let osc = new AudioWorkletNode(audioCtx, 'oscillator-processor', {outputChannelCount: [2]});
-                    osc.connect(audioCtx.destination)
-                    childItem.data = {osc}
-                }
-            })
         }
         else if(item.className == "Path"){
-            let osc = new AudioWorkletNode(audioCtx, 'oscillator-processor', {outputChannelCount: [2]});
-            osc.connect(audioCtx.destination)
-            item.data = {osc}
+
         }
     })
 }
@@ -265,3 +260,95 @@ const mapValue = (val, inMin, inMax, outMin, outMax, invert = false) => {
     return clamp(factor * outputRange + outMin, outMin, outMax)
 }
 
+
+const createNotePath = function(e){
+    //let osc = new AudioWorkletNode(audioCtx, 'oscillator-processor', {outputChannelCount: [2]});
+    //osc.connect(audioCtx.destination)
+    return new Path({
+        applyMatrix: false,
+        strokeWidth: yPixelScale/2,
+        strokeColor: {
+            gradient: {
+                stops:[[new Color(0,0,1,1),0],[new Color(0,0,1,1),0]]
+            }
+        },
+        strokeScaling: false,
+        segments: [softRoundPointY(e.point,yPixelScale)],
+        data: { 
+                //osc, 
+                pointerIds: [],
+            }
+    })    
+}
+
+//let prevAmp = 0
+//let currAmp = 0
+function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDuration){
+    pressure = pressure || 1
+    let touchScale = drawTool.touchScale || 1
+    //touchScale = 1 * pressure
+    //console.log(pressure)
+    //let pitchBend = drawTool.touchDelta && drawTool.touches.length == 3 ? drawTool.touchDelta.y / yPixelScale : 0
+    let pitchBend = 0
+    let intersections = item.getIntersections(touchPath)
+    let ampScale = item.strokeWidth / yPixelScale;
+
+    if(item.strokeColor.gradient){
+        //let xNorm = item.getNormalizedX(intersections[0].point.x)
+        let gradTime = getTimeForProjectedPoint(item.strokeColor.origin, item.strokeColor.destination, intersections[0].point)
+        col = item.getGradientColorAtX(clamp(gradTime,0,1))
+    }
+    else col = item.strokeColor
+
+    let yCoord = view.viewSize.height - intersections[0].point.y
+    let curvature = clamp(Math.max(0.5, col.red), 0.5, 0.99);
+    let midpoint = clamp(0.5 - (col.green / 2), 0.05, 1);
+    let noise = clamp(col.red+col.green+col.blue-2,0,1)
+    //let resonance = 1-noise
+    //let pan = 0.5 - (intersections[0].point.y / view.viewSize.height)
+    //let firstItem = 
+    //let pan = (item.index / project.getItems({guide: false,className: "Path"}).length -2) * 2 - 1
+    let pan = 0;
+    let alpha = col.alpha;
+    //prevAmp = currAmp
+    const amp = clamp(alpha / (intersectionCount*8),0,0.5)
+    //currAmp = amp
+    //console.log(currAmp - prevAmp)
+    let frequency = noteToFrequency(yCoord / yPixelScale + noteOffset + pitchBend); 
+    setOscillatorParams({osc, context: audioCtx, amp, pan, frequency, midpoint, curvature, noise, rampDuration
+        //resonance
+    })
+    //let ampVal = (col.alpha * Math.min(0.8,deltaPos.length/100)) / intersectionCount;
+}
+
+function intersectSymbolItem(touchPath,item,intersectionCount, pressure, instance){
+    pressure = pressure || 1
+    let osc = item.data.osc
+    intersectionCount += 1;
+    let touchScale = drawTool.touchScale || 1
+    let intersections = touchPath.getIntersections(item, x => true, instance.matrix)
+    if(intersections.length){
+        let ampScale = item.strokeWidth / yPixelScale;
+        let pt = touchPath.localToGlobal(intersections[0].point)
+        let gradPt = instance.globalToLocal(pt)
+        if(item.strokeColor.gradient){
+            let gradTime = getTimeForProjectedPoint(item.strokeColor.origin, item.strokeColor.destination, gradPt)
+            col = item.getGradientColorAtX(clamp(gradTime,0,1))
+        }
+        else col = item.strokeColor
+
+        let yCoord = view.viewSize.height - intersections[0].point.y
+        let curvature = clamp(Math.max(0.5, col.red), 0.5, 0.99);
+        let midpoint = clamp(0.5 - (col.green / 2), 0.05, 1);
+        let noise = clamp(col.red+col.green+col.blue-2,0,1)
+        let resonance = 1-noise
+        //let pan = item.index / project.getItems({guide: false,className: "Path"}).length * 2 - 1
+        let pan = 0
+        let alpha = col.alpha || 1
+        const amp = clamp(ampScale * touchScale * alpha / (intersectionCount * 2),0,1)
+        let frequency = noteToFrequency(yCoord / yPixelScale + noteOffset);
+        setOscillatorParams({osc, context: audioCtx, amp, pan, frequency, midpoint, curvature, noise, 
+            //resonance
+        })
+    }
+}

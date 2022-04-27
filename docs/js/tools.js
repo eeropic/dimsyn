@@ -23,31 +23,16 @@ drawTool.touchRectStart = null
 drawTool.cloneActive = false
 drawTool.removeSegment = false
 drawTool.playing = false
+drawTool.prevPosition = 0
 drawTool.playPosition = 0
 
 drawTool.on({
     mousedown(e){
         if(e.event.pointerType == "pen" || e.event.pointerType == "mouse"){
             let hit = project.hitTest(e.point, {guides:false})
-            console.log(hit)
+            
             if(!hit || !hit.item.selected){
-                let osc = new AudioWorkletNode(audioCtx, 'oscillator-processor', {outputChannelCount: [2]});
-                osc.connect(audioCtx.destination)
-                this.path = new Path({
-                    applyMatrix: false,
-                    strokeWidth: yPixelScale/2,
-                    strokeColor: {
-                        gradient: {
-                            stops:[[new Color(0,0,0,1),0],[new Color(0,0,0,1),0]]
-                        }
-                    },
-                    strokeScaling: false,
-                    segments: [softRoundPointY(e.point,yPixelScale)],
-                    data: { 
-                            osc, 
-                            pointerIds: [],
-                        }
-                })
+                this.path = createNotePath(e)
             }
             else {
                 if(hit.item && hit.item.selected){
@@ -113,6 +98,7 @@ drawTool.on({
             this.playing = !this.playing
         }
         if(e.key == "enter"){
+            this.prevPosition = this.playPosition;
             this.playPosition = 0;
         }
     }
