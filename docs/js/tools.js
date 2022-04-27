@@ -27,7 +27,7 @@ drawTool.playPosition = 0
 
 drawTool.on({
     mousedown(e){
-        if(e.event.pointerType == "pen" || e.event.pointerType == "mouse"){
+        if(e.event.pointerType == "pen" || e.event.pointerType == "mouse"){
             let hit = project.hitTest(e.point, {guides:false})
             console.log(hit)
             if(!hit || !hit.item.selected){
@@ -62,8 +62,8 @@ drawTool.on({
         }        
     },
     mousemove(e){
-        if(e.event.pointerType == "pen" || e.event.pointerType == "mouse"){
-            let tiltX = e.event.tiltX || 0
+        if(e.event.pointerType == "pen" || e.event.pointerType == "mouse"){
+            let tiltX = e.event.tiltX || 0
             let tiltY = e.event.tiltY || 0
             let valZ = e.event.pressure || drawTool.webkitForce % 1 || 1
             let valX = Math.abs(tiltX / 90)

@@ -561,7 +561,7 @@ function intersectItem(touchPath,item,intersectionCount, pressure){
     pressure = pressure || 1
     let osc = item.data.osc
     intersectionCount += 1;
-    let touchScale = drawTool.touchScale || 1
+    let touchScale = drawTool.touchScale || 1
     //touchScale = 1 * pressure
     //console.log(pressure)
     //let pitchBend = drawTool.touchDelta && drawTool.touches.length == 3 ? drawTool.touchDelta.y / yPixelScale : 0
@@ -597,7 +597,7 @@ function intersectSymbolItem(touchPath,item,intersectionCount, pressure, instanc
     pressure = pressure || 1
     let osc = item.data.osc
     intersectionCount += 1;
-    let touchScale = drawTool.touchScale || 1
+    let touchScale = drawTool.touchScale || 1
     let intersections = touchPath.getIntersections(item, x => true, instance.matrix)
     if(intersections.length){
         let ampScale = item.strokeWidth / yPixelScale;
