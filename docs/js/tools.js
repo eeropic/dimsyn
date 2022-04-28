@@ -69,7 +69,7 @@ drawTool.on({
                     if(this.path.bounds.width>0)
                         this.path.matchGradientToBounds()
                     this.path.simplify()
-                    //this.path.simplifyGradient()
+                    this.path.simplifyGradient()
                 }
                 this.path = 0
             }

@@ -612,12 +612,118 @@ drawTool.drawTouches = function(){
 
 
 
-view.autoUpdate = false
+//view.autoUpdate = false
+
 view.onFrame = function(e){
     if(e.count % 10 == 0){
         //console.log(activeIDs)
         //console.log(oscArray)
     }
-
+    checkIntersections()
 }
 
+
+function checkIntersections(){
+
+    if(project.selectedItems.length == 0){
+        if(drawTool.touches.length >= 2){
+            drawTool.touchesCenter = drawTool.touches.reduce( 
+                (prev,curr) => {
+                    return {
+                        point: prev.point.add(curr.point)
+                    }
+                },
+                {
+                    point: new Point(0,0)
+                }
+            ).point.divide(drawTool.touches.length)
+            drawTool.touchPath.segments = drawTool.touches.map(x => x.point.subtract(drawTool.touchesCenter))
+        }
+        else {
+            drawTool.touchPath.segments = [new Point(0,0), new Point(0,view.viewSize.height)]
+            drawTool.touchesCenter = [0,0]
+        }
+
+        if(drawTool.playing){
+            drawTool.prevPosition = drawTool.playPosition
+            drawTool.playPosition+=5;
+        }
+        
+        drawTool.touchPath.position.x = drawTool.playPosition % 1280
+        drawTool.touchPath.position.y = view.center.y
+
+        if(drawTool.touches.length>=2){
+            drawTool.prevPosition = drawTool.playPosition
+            drawTool.playPosition = drawTool.touchesCenter.x
+            drawTool.touchPath.position = drawTool.touchesCenter
+        }
+        }        
+
+        let items = project.getItems({guide: false,className: "Path",})
+
+        items.forEach(item => {
+            let intersects = item.intersects(drawTool.touchPath)
+
+            if(intersects){
+                if(activeIDs.indexOf(item.id) == -1)
+                    activeIDs.push(item.id)
+                
+                // find next available oscillator or the use existing with same id
+                let oscObject = oscArray.filter(oscillator => oscillator.id == null)
+                let existingOscy = oscArray.filter(oscillator => oscillator.id == item.id)
+
+                if(oscObject.length && !existingOscy.length){
+                    oscObject[0].id = item.id
+                    if(drawTool.playPosition != drawTool.prevPosition){
+                        intersectItem(drawTool.touchPath, item, activeIDs.length, 1, oscObject[0], 1/60)
+                    }
+                    //reset oscillator phase
+                    //oscObject[0].osc.port.postMessage("reset")
+                }
+                else if(existingOscy.length){
+                    if(drawTool.playPosition != drawTool.prevPosition){
+                        intersectItem(drawTool.touchPath, item, activeIDs.length, 1, existingOscy[0], 0.0001) 
+                    }                 
+                }
+
+            }
+            else {
+                activeIDs = activeIDs.filter(id => id != item.id)
+                let _osc = oscArray.filter(oscillator => oscillator.id == item.id)
+                if(_osc.length){
+                    _osc[0].id = null
+                    let amp = _osc[0].osc.parameters.get("amp")
+                    amp.cancelScheduledValues(audioCtx.currentTime)
+                    amp.setTargetAtTime(0,audioCtx.currentTime, 1/60)                    
+                }
+            }
+        })
+
+    let symbolItems = project.getItems({guide: false, className: "SymbolItem"})
+    symbolItems.forEach(item => {
+        let intersects = drawTool.touchPath.intersects(item)
+        if(intersects){
+            intersectionCount++
+            let childItems = item.definition.item.getItems({className: "Path"})
+            if(item.definition.item.data.players.indexOf(item.id) == -1)
+                item.definition.item.data.players.push(item.id)
+
+            childItems.forEach(childItem => {
+                intersectSymbolItem(drawTool.touchPath, childItem, intersectionCount, 1, item) 
+            })
+            //intersectItem(drawTool.touchPaths[0], item, intersectionCount, (drawTool.touches[0].pressure + drawTool.touches[1].pressure) / 1000)
+        }
+        else {
+            item.definition.item.data.players = item.definition.item.data.players.filter(id => id != item.id)
+            if(item.definition.item.data.players.length == 0){
+                let childItems = item.definition.item.getItems({className: "Path"})
+                childItems.forEach(childItem => {
+                    let amp = childItem.data.osc.parameters.get("amp")
+                    amp.linearRampToValueAtTime(0,audioCtx.currentTime+0.02)
+                })
+            }
+        }
+    })
+
+    
+}
