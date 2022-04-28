@@ -39,11 +39,11 @@ class OscillatorProcessor extends AudioWorkletProcessor {
 					defaultValue: 440,
 					minValue: 1, maxValue: 0.5 * sampleRate},			
 				{ name: 'midpoint',
-					defaultValue: 0.5,
-					minValue: 0.05, maxValue: 0.5 },
+					defaultValue: 0.99,
+					minValue: 0.01, maxValue: 0.99 },
 				{ name: 'curvature',
-					defaultValue: 0.5,
-					minValue: 0.5, maxValue: 0.99 },
+					defaultValue: 0.01,
+					minValue: 0.01, maxValue: 0.99 },
 				{ name: 'noise',
 					defaultValue: 0.0,
 					minValue: 0.0, maxValue: 1.0 },
@@ -82,8 +82,8 @@ class OscillatorProcessor extends AudioWorkletProcessor {
 				const amp = amps.length > 1 ? amps[i] : amps[0]
 				const pan = pans.length > 1 ? pans[i] : pans[0]
 				const frequency = frequencies.length > 1 ? frequencies[i] : frequencies[0]
-				const midpoint = midpoints.length > 1 ? midpoints[i] : midpoints[0]
-				const curvature = curvatures.length > 1 ? curvatures[i] : curvatures[0]
+				let midpoint = midpoints.length > 1 ? midpoints[i] : midpoints[0]
+				let curvature = curvatures.length > 1 ? curvatures[i] : curvatures[0]
 				const noise = noises.length > 1 ? noises[i] : noises[0]
 				
 				this.prevTime = this.currTime
@@ -92,7 +92,9 @@ class OscillatorProcessor extends AudioWorkletProcessor {
 				this.d += dt * frequency * 2 * Math.PI
 				this.d = this.d % (2 * Math.PI)
 				const cycle = this.d / (2 * Math.PI)
-				
+				midpoint = midpoint / 2.0;
+				curvature = curvature / 2.0 + 0.5;
+				//this.log(curvature)
 				const mult1 = 1 / midpoint;
         		const mult2 = 1 / (1 - midpoint);
 				const midpoint2 = this.clamp(midpoint, 0.2, 0.5)

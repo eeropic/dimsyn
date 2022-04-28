@@ -62,7 +62,7 @@ canvas[resize] {
   display: flex;
 }
 
-#start-button-inner {
+.inner-button {
     display:block;
     margin: auto;
     padding: 20px;

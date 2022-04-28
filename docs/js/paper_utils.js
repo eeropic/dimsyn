@@ -301,8 +301,8 @@ function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDu
     else col = item.strokeColor
 
     let yCoord = view.viewSize.height - intersections[0].point.y
-    let curvature = clamp(Math.max(0.5, col.red), 0.5, 0.99);
-    let midpoint = clamp(0.5 - (col.green / 2), 0.05, 1);
+    let curvature = clamp(col.red, 0.01, 0.99);
+    let midpoint = clamp(1 - col.green, 0.01, 0.99);
     let noise = clamp(col.red+col.green+col.blue-2,0,1)
     //let resonance = 1-noise
     //let pan = 0.5 - (intersections[0].point.y / view.viewSize.height)
@@ -311,7 +311,7 @@ function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDu
     let pan = 0;
     let alpha = col.alpha;
     //prevAmp = currAmp
-    const amp = clamp(alpha / (intersectionCount*8),0,0.5)
+    const amp = clamp(alpha / intersectionCount,0,0.5)
     //currAmp = amp
     //console.log(currAmp - prevAmp)
     let frequency = noteToFrequency(yCoord / yPixelScale + noteOffset + pitchBend); 

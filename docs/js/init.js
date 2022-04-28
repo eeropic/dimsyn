@@ -1,3 +1,45 @@
+const MIDI_ENABLED = false
+
+const MIDI_IN_DEV = 1;
+const MIDI_OUT_DEV = 1;
+
+const NOTE_ON = 0x90;
+const NOTE_OFF = 0x80;
+const GRID_SIZE = 20;
+
+const GRID_Y = 10;
+const BASENOTE = 0;
+
+const PPQ = 96;
+const BPM = 120;
+
+const MIDI_NOTE_440 = 69;
+
+const QNOTE_WIDTH = PPQ;
+const GRID_X = QNOTE_WIDTH / 4;
+const PPQ_STEP = (QNOTE_WIDTH * 8) / PPQ;
+
+const GLOBAL_QUANTIZE = PPQ / 4;
+
+const LOOP_LENGTH_QNOTES = 8;
+
+const PAN_Y_LIMIT = 160;
+
+const VIEW_HEIGHT = 840;
+const VOL_MULTIPLIER = 0.05;
+const VOLUME_Y = 20;
+
+const SAMPLERATE = 48000;
+
+//const OSC_FADE_TIME = 1 / (SAMPLERATE / 128);
+const OSC_FADE_TIME = 0.008
+
+const LOCATOR_STYLE = {
+    strokeWidth: 1,
+    strokeColor: 'cyan',
+    opacity: 0.3,
+};
+
 yPixelScale = 20
 noteOffset = 36
 pianoKeys = [1,0,1,0,1,1,0,1,0,1,0,1]
@@ -125,12 +167,16 @@ window.addEventListener('wheel', event => {
 //addEl(['scroll'])
 let touchIDs = {}
 
-document.getElementById("start-button").onclick = e => {
-    console.log('init audio context')
-    initAudioContext()
+document.getElementById("start-button-webaudio").onclick = e => {
+    console.log('Using native webaudio oscillators')
+    initAudioContext(false)
     document.getElementById("start-button").style.display = "none"
 }
-
+document.getElementById("start-button-worklet").onclick = e => {
+    console.log('Using AudioWorklet oscillators')
+    initAudioContext(true)
+    document.getElementById("start-button").style.display = "none"
+}
 //document.getElementById("start-button").style.display = "none"
 //initAudioContext()
 
@@ -675,14 +721,14 @@ function checkIntersections(){
                 if(oscObject.length && !existingOscy.length){
                     oscObject[0].id = item.id
                     if(drawTool.playPosition != drawTool.prevPosition){
-                        intersectItem(drawTool.touchPath, item, activeIDs.length, 1, oscObject[0], 1/60)
+                        intersectItem(drawTool.touchPath, item, activeIDs.length, 1, oscObject[0], OSC_FADE_TIME)
                     }
                     //reset oscillator phase
                     //oscObject[0].osc.port.postMessage("reset")
                 }
                 else if(existingOscy.length){
                     if(drawTool.playPosition != drawTool.prevPosition){
-                        intersectItem(drawTool.touchPath, item, activeIDs.length, 1, existingOscy[0], 0.0001) 
+                        intersectItem(drawTool.touchPath, item, activeIDs.length, 1, existingOscy[0], OSC_FADE_TIME) 
                     }                 
                 }
 
@@ -692,9 +738,9 @@ function checkIntersections(){
                 let _osc = oscArray.filter(oscillator => oscillator.id == item.id)
                 if(_osc.length){
                     _osc[0].id = null
-                    let amp = _osc[0].osc.parameters.get("amp")
+                    let amp = _osc[0].amp
                     amp.cancelScheduledValues(audioCtx.currentTime)
-                    amp.setTargetAtTime(0,audioCtx.currentTime, 1/60)                    
+                    amp.setTargetAtTime(0,audioCtx.currentTime, OSC_FADE_TIME)                    
                 }
             }
         })
@@ -719,7 +765,7 @@ function checkIntersections(){
                 let childItems = item.definition.item.getItems({className: "Path"})
                 childItems.forEach(childItem => {
                     let amp = childItem.data.osc.parameters.get("amp")
-                    amp.linearRampToValueAtTime(0,audioCtx.currentTime+0.02)
+                    amp.linearRampToValueAtTime(0,audioCtx.currentTime+OSC_FADE_TIME)
                 })
             }
         }
