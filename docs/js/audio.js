@@ -128,7 +128,7 @@ function initAudioContext(useAudioWorklet){
             //reverbjs
             reverbjs.extend(audioCtx);
 
-                var reverbUrl = '../assets/TerrysTypingRoom.m4a';
+                var reverbUrl = 'assets/TerrysTypingRoom.m4a';
                 var reverbNode = audioCtx.createReverbFromUrl(reverbUrl, function () {
                 reverbNode.connect(audioCtx.destination);
                 //    reverbNode.connect(masterOutput)
@@ -136,7 +136,6 @@ function initAudioContext(useAudioWorklet){
             });
 
             //
-
             for(let i = 0; i < MAX_POLYPHONY; i++){
                 let osc = new AudioWorkletNode(audioCtx, 'oscillator-processor', {outputChannelCount: [2]});
                 osc.port.onmessage = function(e){
