@@ -1,56 +1,12 @@
-const MIDI_ENABLED = false
+let noteLineCount = Math.floor(VIEW_HEIGHT / yPixelScale)
 
-const MIDI_IN_DEV = 1;
-const MIDI_OUT_DEV = 1;
-
-const NOTE_ON = 0x90;
-const NOTE_OFF = 0x80;
-const GRID_SIZE = 20;
-
-const GRID_Y = 10;
-const BASENOTE = 0;
-
-const PPQ = 96;
-const BPM = 120;
-
-const MIDI_NOTE_440 = 69;
-
-const QNOTE_WIDTH = PPQ;
-const GRID_X = QNOTE_WIDTH / 4;
-const PPQ_STEP = (QNOTE_WIDTH * 8) / PPQ;
-
-const GLOBAL_QUANTIZE = PPQ / 4;
-
-const LOOP_LENGTH_QNOTES = 8;
-
-const PAN_Y_LIMIT = 160;
-
-const VIEW_HEIGHT = 840;
-const VOL_MULTIPLIER = 0.05;
-const VOLUME_Y = 20;
-
-const SAMPLERATE = 48000;
-
-//const OSC_FADE_TIME = 1 / (SAMPLERATE / 128);
-const OSC_FADE_TIME = 0.008
-
-const LOCATOR_STYLE = {
-    strokeWidth: 1,
-    strokeColor: 'cyan',
-    opacity: 0.3,
-};
-
-yPixelScale = 20
-noteOffset = 36
-pianoKeys = [1,0,1,0,1,1,0,1,0,1,0,1]
-
-let noteLineCount = Math.floor(view.viewSize.height / yPixelScale)
+view.translate(0,-320)
 
 let noteLines = []
 
 for(let i = 0; i < noteLineCount; i++){
     if(pianoKeys[i%12]){
-        let yCoord = view.viewSize.height - i*yPixelScale - yPixelScale/2
+        let yCoord = VIEW_HEIGHT - i*yPixelScale - yPixelScale/2
         let noteLinePath = new Path({
             guide: true,
             strokeWidth: yPixelScale-1,
@@ -251,6 +207,10 @@ document.getElementById("clone-button").onpointerup = function(e){
 
 document.getElementById("remove-segment-button").onpointerdown = e => drawTool.removeSegment = true
 document.getElementById("remove-segment-button").onpointerup = e => drawTool.removeSegment = false
+
+document.getElementById("clear-project").onclick = e => {
+    project.clear()
+}
 
 
 var pointerTouches = []
@@ -714,9 +674,13 @@ function checkIntersections(){
                 if(activeIDs.indexOf(item.id) == -1)
                     activeIDs.push(item.id)
                 
+                
                 // find next available oscillator or the use existing with same id
                 let oscObject = oscArray.filter(oscillator => oscillator.id == null)
                 let existingOscy = oscArray.filter(oscillator => oscillator.id == item.id)
+
+                let midiChannelNew = midiOutputChannels.filter(channel => channel.id == null)
+                let midiChannelOld = midiOutputChannels.filter(channel => channel.id == item.id)
 
                 if(oscObject.length && !existingOscy.length){
                     oscObject[0].id = item.id

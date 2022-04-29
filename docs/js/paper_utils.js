@@ -291,6 +291,7 @@ function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDu
     //let pitchBend = drawTool.touchDelta && drawTool.touches.length == 3 ? drawTool.touchDelta.y / yPixelScale : 0
     let pitchBend = 0
     let intersections = item.getIntersections(touchPath)
+    //console.log(intersections[0].intersection)
     let ampScale = item.strokeWidth / yPixelScale;
 
     if(item.strokeColor.gradient){
@@ -300,7 +301,9 @@ function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDu
     }
     else col = item.strokeColor
 
-    let yCoord = view.viewSize.height - intersections[0].point.y
+    //let yCoord = view.viewSize.height - intersections[0].point.y
+    let yCoord = VIEW_HEIGHT - item.localToGlobal(intersections[0].point).y
+    console.log(yCoord)
     let curvature = clamp(col.red, 0.01, 0.99);
     let midpoint = clamp(1 - col.green, 0.01, 0.99);
     let noise = clamp(col.red+col.green+col.blue-2,0,1)
@@ -314,7 +317,15 @@ function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDu
     const amp = clamp(alpha / intersectionCount,0,0.5)
     //currAmp = amp
     //console.log(currAmp - prevAmp)
-    let frequency = noteToFrequency(yCoord / yPixelScale + noteOffset + pitchBend); 
+    let frequency = noteToFrequency(yCoord / yPixelScale + noteOffset + pitchBend);
+    
+    if(midiOutputs.length){
+        midiOutputs.forEach(output => {
+            let note = VIEW_HEIGHT - (item.segments[0].point.y / yPixelScale)
+            
+        })
+    }
+    
     setOscillatorParams({osc, context: audioCtx, amp, pan, frequency, midpoint, curvature, noise, rampDuration
         //resonance
     })

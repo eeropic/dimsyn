@@ -5,6 +5,10 @@ class OscillatorProcessor extends AudioWorkletProcessor {
     else if( x > 3 ) return 1;
     else return x * ( 27 + x * x ) / ( 27 + 9 * x * x );
 	}
+
+	// Exponential blend function from https://math.stackexchange.com/a/1754900
+	// https://www.desmos.com/calculator/hnna88e40o
+
 	exponentialBlend = (x, p, s) => {
 			let c = 2 / (1 - s) - 1
 			let y = 0;

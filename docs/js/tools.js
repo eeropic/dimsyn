@@ -1,6 +1,3 @@
-
-
-
 let drawTool = new Tool();
 drawTool.path = 0
 paper.settings.hitTolerance = 16;
@@ -12,31 +9,59 @@ window.addEventListener('webkitmouseforcechanged', e => {
 	drawTool.webkitForce = e.webkitForce;
 })
 
-drawTool.touches = []
-drawTool.touchesCenter = new Point(0,0)
-drawTool.touchScale = null
-drawTool.touchRotation = null
-drawTool.touchPosition = null
-drawTool.touchDelta = null
-drawTool.touchRect = null
-drawTool.touchRectStart = null
-drawTool.cloneActive = false
-drawTool.removeSegment = false
-drawTool.playing = false
-drawTool.prevPosition = 0
-drawTool.playPosition = 0
+Object.entries({
+    touches: [],
+    touchesCenter: new Point(0,0),
+    touchScale: null,
+    touchRotation: null,
+    touchPosition: null,
+    touchDelta: null,
+    touchRect: null,
+    touchRectStart: null,
+    cloneActive: false,
+    removeSegment: false,
+    playing: false,
+    prevPosition: 0,
+    playPosition: 0
+}).forEach(keyValue => drawTool[keyValue[0]] = keyValue[1])
+
+drawToolFunctions = {
+    down: {
+        pen(e){
+        },
+        mouse(e){
+        },
+        touch(e){
+        }
+    },
+    move: {
+        pen(e){
+        },
+        mouse(e){
+        },
+        touch(e){
+        }
+    },
+    up: {
+        pen(e){
+        },
+        mouse(e){
+        },
+        touch(e){
+        }
+    }
+}
 
 drawTool.on({
     mousedown(e){
-        if(e.event.pointerType == "pen" || e.event.pointerType == "mouse"){
+        // drawToolFunctions.down[e.event.pointerType].call(this, e)
+        if(e.event.pointerType == "pen"){
             let hit = project.hitTest(e.point, {guides:false})
-            
             if(!hit || !hit.item.selected){
                 this.path = createNotePath(e)
             }
             else {
                 if(hit.item && hit.item.selected){
-                    console.log('boloogo')
                     this.tempPath = new Path({
                         guide:true,
                         strokeColor: "cyan",
@@ -44,24 +69,39 @@ drawTool.on({
                     })
                 }
             }
-        }        
+        }
+        else if(e.event.pointerType == "mouse"){
+            this.path = createNotePath(e)
+        }
+        else if(e.event.pointerType == "touch"){
+            console.log('yessss')
+        }
     },
     mousemove(e){
-        if(e.event.pointerType == "pen" || e.event.pointerType == "mouse"){
-            let tiltX = e.event.tiltX || 0
-            let tiltY = e.event.tiltY || 0
-            let valZ = e.event.pressure || drawTool.webkitForce % 1 || e.delta.length / 10;
-            if(valZ == 0.5)
-                valZ = e.delta.length / 10
-            let valX = Math.abs(tiltX / 90)
-            let valY = Math.abs(tiltY / 90)
-            if(this.path)
+        let tiltX = e.event.tiltX || 0
+        let tiltY = e.event.tiltY || 0
+        let valZ = e.event.pressure || drawTool.webkitForce % 1 || e.delta.length / 10;
+        if(valZ == 0.5)valZ = e.delta.length / 10
+        let valX = Math.abs(tiltX / 90)
+        let valY = Math.abs(tiltY / 90)
+
+        if(e.event.pointerType == "pen"){
+            if(this.path && e.event.buttons){
                 this.path.addGradientPoint(softRoundPointY(e.point,yPixelScale), new Color(valY,valX,1-valY,valZ))
+            }
             else if(this.tempPath){
                 this.tempPath.add(e.point)
             }
         }
-    },           
+        else if(e.event.pointerType == "mouse"){
+            if(this.path && e.event.buttons){
+                this.path.addGradientPoint(softRoundPointY(e.point,yPixelScale), new Color(valY,valX,1-valY,valZ))
+            }
+        }
+        else if(e.event.pointerType == "touch"){
+            
+        }
+    },
     mouseup(e){
         if(e.event.pointerType == "pen" || e.event.pointerType == "mouse"){
             if(this.path){
@@ -71,7 +111,7 @@ drawTool.on({
                     this.path.simplify()
                     this.path.simplifyGradient()
                 }
-                this.path = 0
+                this.path = 0 
             }
             else if(this.tempPath){
                 let selectedPath = project.selectedItems[0];
