@@ -780,6 +780,7 @@ function checkIntersections(){
     
 }
 
+/*
 var renderLink = document.getElementById('render-wav-button');
 var downloadLink = document.getElementById('download-wav-button');
 
@@ -833,3 +834,5 @@ renderLink.addEventListener('click', function () {
         downloadLink.download = `webaudio_render${Date.now()}.wav`;
     });
 });
+
+*/
