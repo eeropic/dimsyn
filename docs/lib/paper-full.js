@@ -4652,14 +4652,14 @@ new function() {
 	}
 }), {
 
-	_setStyles: function(ctx, param, viewMatrix) {
+	_setStyles: function(ctx, param, viewMatrix, strokeMatrix) {
 		var style = this._style,
 			matrix = this._matrix;
 		if (style.hasFill()) {
-			ctx.fillStyle = style.getFillColor().toCanvasStyle(ctx, matrix);
+			ctx.fillStyle = style.getFillColor().toCanvasStyle(ctx, matrix, strokeMatrix);
 		}
 		if (style.hasStroke()) {
-			ctx.strokeStyle = style.getStrokeColor().toCanvasStyle(ctx, matrix);
+			ctx.strokeStyle = style.getStrokeColor().toCanvasStyle(ctx, matrix, strokeMatrix);
 			ctx.lineWidth = style.getStrokeWidth();
 			var strokeJoin = style.getStrokeJoin(),
 				strokeCap = style.getStrokeCap(),
@@ -5203,7 +5203,7 @@ var Shape = Item.extend({
 			ctx.closePath();
 		}
 		if (!dontPaint && (hasFill || hasStroke)) {
-			this._setStyles(ctx, param, viewMatrix);
+			this._setStyles(ctx, param, viewMatrix, strokeMatrix);
 			if (hasFill) {
 				ctx.fill(style.getFillRule());
 				ctx.shadowColor = 'rgba(0,0,0,0)';
@@ -9484,7 +9484,7 @@ new function() {
 			}
 
 			if (!dontPaint && (hasFill || hasStroke)) {
-				this._setStyles(ctx, param, viewMatrix);
+				this._setStyles(ctx, param, viewMatrix, strokeMatrix);
 				if (hasFill) {
 					ctx.fill(style.getFillRule());
 					ctx.shadowColor = 'rgba(0,0,0,0)';
@@ -10254,7 +10254,7 @@ var CompoundPath = PathItem.extend({
 			children[i].draw(ctx, param, strokeMatrix);
 
 		if (!param.clip) {
-			this._setStyles(ctx, param, viewMatrix);
+			this._setStyles(ctx, param, viewMatrix, strokeMatrix);
 			var style = this._style;
 			if (style.hasFill()) {
 				ctx.fill(style.getFillRule());
@@ -11603,7 +11603,7 @@ var PointText = TextItem.extend({
 	_draw: function(ctx, param, viewMatrix) {
 		if (!this._content)
 			return;
-		this._setStyles(ctx, param, viewMatrix);
+		this._setStyles(ctx, param, viewMatrix, strokeMatrix);
 		var lines = this._lines,
 			style = this._style,
 			hasFill = style.hasFill(),
@@ -12110,7 +12110,7 @@ var Color = Base.extend(new function() {
 						+ components.join(',') + ')';
 		},
 
-		toCanvasStyle: function(ctx, matrix) {
+		toCanvasStyle: function(ctx, matrix, strokeMatrix) {
 			if (this._canvasStyle)
 				return this._canvasStyle;
 			if (this._type !== 'gradient')
@@ -15237,8 +15237,8 @@ new function() {
 			gradient = new Gradient(stops, radial);
 		}
 		var origin, destination, highlight,
-			scaleToBounds = getValue(node, 'gradientUnits', true) !==
-				'userSpaceOnUse' && !id;
+			scaleToBounds = getValue(node, 'gradientUnits', true) !== 'userSpaceOnUse' && !getValue(node, 'href', true);
+			// temporary fix ^ if linked gradient doesn't have userspaceonuse defined
 		if (radial) {
 			origin = getPoint(node, 'cx', 'cy', false, scaleToBounds,
 				'50%', '50%');

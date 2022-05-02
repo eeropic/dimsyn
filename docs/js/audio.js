@@ -123,35 +123,37 @@ function initAudioContext(useAudioWorklet){
 
     if(useAudioWorklet){
         audioCtx.audioWorklet.addModule('js/oscillator-processor.js').then(() => {
+            /*
+                //
+                //reverbjs
+                reverbjs.extend(audioCtx);
 
-            //
-            //reverbjs
-            reverbjs.extend(audioCtx);
+                    var reverbUrl = 'assets/TerrysTypingRoom.m4a';
+                    var reverbNode = audioCtx.createReverbFromUrl(reverbUrl, function () {
+                    // reverbNode.connect(audioCtx.destination);
+                    //    reverbNode.connect(masterOutput)
 
-                var reverbUrl = 'assets/TerrysTypingRoom.m4a';
-                var reverbNode = audioCtx.createReverbFromUrl(reverbUrl, function () {
-                reverbNode.connect(audioCtx.destination);
-                //    reverbNode.connect(masterOutput)
-
-            });
-
-            //
+                });
+            */
+            
             for(let i = 0; i < MAX_POLYPHONY; i++){
                 let osc = new AudioWorkletNode(audioCtx, 'oscillator-processor', {outputChannelCount: [2]});
                 osc.port.onmessage = function(e){
                     if(e.timeStamp%100 == 0)console.log(e.data)
                 }
-                osc.connect(reverbNode)
-                reverbNode.connect(audioCtx.destination)
+                //osc.connect(reverbNode)
+                osc.connect(audioCtx.destination)
+                //reverbNode.connect(audioCtx.destination)
                 oscArray.push({
                     id:null, 
                     osc,
                     amp: osc.parameters.get('amp'), 
-                    frequency: osc.parameters.get('frequency'),
                     midpoint: osc.parameters.get('midpoint'), 
                     curvature: osc.parameters.get('curvature'), 
                     pan: osc.parameters.get('pan'),
                     noise: osc.parameters.get('noise'),
+                    frequency: osc.parameters.get('frequency'),
+                    resonance: osc.parameters.get('resonance'),
                 })
             }
         });
@@ -160,8 +162,8 @@ function initAudioContext(useAudioWorklet){
         for(let i = 0; i < MAX_POLYPHONY; i++){
             let osc = createOscNodeGroup(audioCtx, audioCtx.destination)
             //let osc = new AudioWorkletNode(audioCtx, 'oscillator-processor', {outputChannelCount: [2]});
-            //osc.connect(audioCtx.destination)
-            osc.connect(reverbNode)
+            osc.connect(audioCtx.destination)
+            //osc.connect(reverbNode)
             oscArray.push({
                 id:null, 
                 osc,
@@ -211,17 +213,17 @@ function getOscillatorParamRefs(osc){
     curvature: osc.parameters.get('curvature'), 
     pan: osc.parameters.get('pan'),
     noise: osc.parameters.get('noise'),
-    //resonance: osc.parameters.get('resonance'),
+    resonance: osc.parameters.get('resonance'),
   }  
 }
 
 function setOscillatorParams(params){
   const {osc, amp, pan, frequency, midpoint, curvature, noise, rampDuration,
-  //  resonance, 
+  resonance, 
   context} = params;
 
   const {amp: _amp, pan: _pan, frequency: _frequency, midpoint: _midpoint, curvature: _curvature, noise: _noise, 
-  // resonance: _resonance
+  resonance: _resonance
   } = osc;
 
   //let rampDuration = 1/60;
@@ -232,10 +234,11 @@ function setOscillatorParams(params){
 
   _amp.setTargetAtTime(amp,context.currentTime, rampDuration)
   _frequency.linearRampToValueAtTime(frequency, context.currentTime + rampDuration)
-  //_midpoint.linearRampToValueAtTime(midpoint, context.currentTime + rampDuration)
+  _midpoint.linearRampToValueAtTime(midpoint, context.currentTime + rampDuration)
   _curvature.linearRampToValueAtTime(curvature, context.currentTime + rampDuration)
   _pan.linearRampToValueAtTime(pan, context.currentTime + rampDuration)
-
+  _noise.linearRampToValueAtTime(noise, context.currentTime + rampDuration)
+  _resonance.linearRampToValueAtTime(resonance, context.currentTime + rampDuration)    
   /*
 
   _midpoint.linearRampToValueAtTime(midpoint, context.currentTime + rampDuration)
@@ -245,6 +248,15 @@ function setOscillatorParams(params){
 
   */
   //_resonance.linearRampToValueAtTime(resonance, context.currentTime + rampDuration)    
+}
+
+function muteOscillators(){
+    oscArray.forEach(osc => {
+        let amp = osc.amp
+        amp.cancelScheduledValues(audioCtx.currentTime)
+        amp.setTargetAtTime(0,audioCtx.currentTime, OSC_FADE_TIME)
+        osc.id = null
+    })
 }
 
 

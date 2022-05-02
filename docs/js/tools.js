@@ -22,7 +22,8 @@ Object.entries({
     removeSegment: false,
     playing: false,
     prevPosition: 0,
-    playPosition: 0
+    playPosition: 0,
+    startTime: 0
 }).forEach(keyValue => drawTool[keyValue[0]] = keyValue[1])
 
 drawToolFunctions = {

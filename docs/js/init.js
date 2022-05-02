@@ -1,24 +1,25 @@
 let noteLineCount = Math.floor(VIEW_HEIGHT / yPixelScale)
 
-view.translate(0,-320)
-
-let noteLines = []
-
-for(let i = 0; i < noteLineCount; i++){
-    if(pianoKeys[i%12]){
-        let yCoord = VIEW_HEIGHT - i*yPixelScale - yPixelScale/2
-        let noteLinePath = new Path({
-            guide: true,
-            strokeWidth: yPixelScale-1,
-            strokeColor: '#181818',
-            segments:[[0,yCoord],[view.viewSize.width, yCoord]],
-        })
-        noteLines.push(noteLinePath)
+view.translate(320,-320)
+//view.zoom = 2
+function createNoteLines(){
+    let noteLines = []
+    for(let i = 0; i < noteLineCount; i++){
+        if(pianoKeys[i%12]){
+            let yCoord = VIEW_HEIGHT - i*yPixelScale
+            let noteLinePath = new Path({
+                guide: true,
+                strokeWidth: yPixelScale-1,
+                strokeColor: '#202020',
+                segments:[[0,yCoord],[view.viewSize.width, yCoord]],
+            })
+            noteLines.push(noteLinePath)
+        }
     }
-}
-drawTool.noteLines = new Group(noteLines)
+    drawTool.noteLines = new Group(noteLines)
 
-drawTool.touchPath = createTouchPath(0)
+    drawTool.touchPath = createTouchPath(0)
+}
 /*
 //onscreen piano
 let numKeys = 24
@@ -35,6 +36,8 @@ for(let i = 0; i < numKeys; i++){
     })
 }
 */
+
+createNoteLines()
 
 let dropArea = document.getElementById("drop-area")
 dropArea.addEventListener('drop', handleDrop, false)
@@ -123,11 +126,13 @@ window.addEventListener('wheel', event => {
 //addEl(['scroll'])
 let touchIDs = {}
 
+/*
 document.getElementById("start-button-webaudio").onclick = e => {
     console.log('Using native webaudio oscillators')
     initAudioContext(false)
     document.getElementById("start-button").style.display = "none"
 }
+*/
 document.getElementById("start-button-worklet").onclick = e => {
     console.log('Using AudioWorklet oscillators')
     initAudioContext(true)
@@ -162,6 +167,7 @@ function createButtonAction(container, id, callback){
 
 
 
+/* TODO fix local filelist
 createButtonAction(document.getElementById("gui"), "kekes", function(){
     let fileList = document.getElementById("filelist")
     while(fileList.firstChild){
@@ -185,6 +191,8 @@ createButtonAction(document.getElementById("gui"), "kekes", function(){
     }
     paper.projects[0].activate()
 })
+
+*/
 
 document.getElementById("save-button").onclick = e => {
     let localProject = window.localStorage.getItem('dimsyn')
@@ -210,6 +218,8 @@ document.getElementById("remove-segment-button").onpointerup = e => drawTool.rem
 
 document.getElementById("clear-project").onclick = e => {
     project.clear()
+    muteOscillators()
+    createNoteLines()
 }
 
 
@@ -621,9 +631,9 @@ drawTool.drawTouches = function(){
 //view.autoUpdate = false
 
 view.onFrame = function(e){
-    if(e.count % 10 == 0){
+    if(e.count % 2 == 0){
         //console.log(activeIDs)
-        //console.log(oscArray)
+        //console.log(JSON.stringify(midiOutputChannels.filter(channel => channel.id != null)))
     }
     checkIntersections()
 }
@@ -646,17 +656,21 @@ function checkIntersections(){
             drawTool.touchPath.segments = drawTool.touches.map(x => x.point.subtract(drawTool.touchesCenter))
         }
         else {
-            drawTool.touchPath.segments = [new Point(0,0), new Point(0,view.viewSize.height)]
+            drawTool.touchPath.segments = [new Point(0,-yPixelScale/2), new Point(0,VIEW_HEIGHT+yPixelScale/2)]
             drawTool.touchesCenter = [0,0]
         }
 
         if(drawTool.playing){
             drawTool.prevPosition = drawTool.playPosition
-            drawTool.playPosition+=5;
+            let xTick = 1/60 * (BPM / 60) * PPQ;
+            drawTool.playPosition += xTick
+            view.translate(-xTick,0)
         }
         
-        drawTool.touchPath.position.x = drawTool.playPosition % 1280
-        drawTool.touchPath.position.y = view.center.y
+        //drawTool.touchPath.position.x = drawTool.playPosition % 1280
+        drawTool.touchPath.position.x = drawTool.playPosition
+        drawTool.touchPath.position.y = 640
+        
 
         if(drawTool.touches.length>=2){
             drawTool.prevPosition = drawTool.playPosition
@@ -673,7 +687,6 @@ function checkIntersections(){
             if(intersects){
                 if(activeIDs.indexOf(item.id) == -1)
                     activeIDs.push(item.id)
-                
                 
                 // find next available oscillator or the use existing with same id
                 let oscObject = oscArray.filter(oscillator => oscillator.id == null)
@@ -696,15 +709,44 @@ function checkIntersections(){
                     }                 
                 }
 
+                if(midiChannelNew.length && !midiChannelOld.length){
+                    midiChannelNew[0].id = item.id
+                    //var noteOnMessage = [0x90, 60, 0x7f];    // note on, middle C, full velocity
+                    let outputChannelNr = midiOutputChannels.indexOf(midiChannelNew[0])
+                    midiOutputs[1].send([
+                        MIDI_STATUS.noteon + outputChannelNr + 1,
+                        Math.floor(item.position.y/yPixelScale),
+                        127
+                    ])
+                }
+                else if(midiChannelOld.length){
+                    let outputChannel = midiChannelOld[0]
+                    let outputChannelNr = midiOutputChannels.indexOf(midiChannelOld[0])
+                }
+
+                
             }
             else {
                 activeIDs = activeIDs.filter(id => id != item.id)
                 let _osc = oscArray.filter(oscillator => oscillator.id == item.id)
+                let _midi = midiOutputChannels.filter(channel => channel.id == item.id)
                 if(_osc.length){
                     _osc[0].id = null
                     let amp = _osc[0].amp
                     amp.cancelScheduledValues(audioCtx.currentTime)
                     amp.setTargetAtTime(0,audioCtx.currentTime, OSC_FADE_TIME)                    
+                }
+                if(_midi.length){
+                    console.log('nulling')
+                    let outputChannelNr = midiOutputChannels.indexOf(_midi[0])
+
+                    midiOutputs[1].send([
+                        MIDI_STATUS.noteoff + outputChannelNr + 1,
+                        Math.floor(item.position.y/yPixelScale),
+                        127
+                    ])
+
+                    _midi[0].id = null
                 }
             }
         })
@@ -737,3 +779,57 @@ function checkIntersections(){
 
     
 }
+
+var renderLink = document.getElementById('render-wav-button');
+var downloadLink = document.getElementById('download-wav-button');
+
+//RENDERING
+renderLink.addEventListener('click', function () {
+    var offlineCtx = new OfflineAudioContext(2, SAMPLERATE * (LOOP_LENGTH_QNOTES / (BPM / 60)), SAMPLERATE);
+    let items = project.getItems({guide: false,className: "Path",})
+    for (let i = 0; i < items.length; i++) {
+        let item = items[i]
+        let noteReverse = pathIsReversed(item);
+
+        let noteY = (noteReverse ? item.lastSegment.point.y : item.firstSegment.point.y);
+        let noteY2 = (noteReverse ? item.firstSegment.point.y : item.lastSegment.point.y);
+        let noteDetune = noteY / GRID_Y + BASENOTE;
+        let noteDetune2 = noteY2 / GRID_Y + BASENOTE;
+        
+        const {oscNode, panNode, gainNode} = createAudioNodeGroup(offlineCtx, item.data.oscType, offlineCtx.destination)
+
+        let startTime = pix2sec(item.bounds.left);
+        let endTime = pix2sec(item.bounds.right);
+        oscNode.start(startTime);
+        oscNode.stop(endTime);
+
+        if (item.segments.length == 2) {
+            let startGain = noteReverse ? 0 : 0.1;
+            let endGain = noteReverse ? 0.1 : 0;
+            let startDetune = noteToFrequency(noteDetune);
+            let endDetune = noteToFrequency(noteDetune2);
+            let noteDuration = Math.max(0.1, endTime - startTime);
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(startGain, startTime + OSC_FADE_TIME);
+            gainNode.gain.linearRampToValueAtTime(endGain, endTime - OSC_FADE_TIME);
+            gainNode.gain.linearRampToValueAtTime(0, endTime);
+
+            //oscGain.gain.setValueCurveAtTime([startGain, endGain], startTime, noteDuration);
+            oscNode.detune.setValueAtTime(startDetune, startTime);
+            oscNode.detune.linearRampToValueAtTime(endDetune, endTime);
+        } else {
+        }
+    }
+
+    offlineCtx.startRendering().then(function (buffer) {
+        console.log('rendered');
+        downloadLink.style.visibility = 'visible';
+        var wav = AB2WAV.toWav(buffer);
+        var blob = new window.Blob([new DataView(wav)], {
+            type: 'audio/wav',
+        });
+        var url = window.URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.download = `webaudio_render${Date.now()}.wav`;
+    });
+});

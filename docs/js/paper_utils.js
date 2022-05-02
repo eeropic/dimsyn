@@ -223,7 +223,7 @@ function importSVGCB(svgString){
             item.definition.item.data.players = []
         }
         else if(item.className == "Path"){
-
+            //console.log(item.strokeColor)
         }
     })
 }
@@ -232,7 +232,7 @@ function createTouchPath(frame){
     return new Path({
         applyMatrix: false,
         strokeColor:"cyan",
-        strokeWidth: 8,
+        strokeWidth: 2,
         guide:true,
         data: {
             startFrame: frame
@@ -272,7 +272,8 @@ const createNotePath = function(e){
                 stops:[[new Color(0,0,1,1),0],[new Color(0,0,1,1),0]]
             }
         },
-        strokeScaling: false,
+        // disable for now as the bug persists https://github.com/LLK/paper.js/pull/40/files
+        //strokeScaling: false,
         segments: [softRoundPointY(e.point,yPixelScale)],
         data: { 
                 //osc, 
@@ -294,27 +295,30 @@ function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDu
     //console.log(intersections[0].intersection)
     let ampScale = item.strokeWidth / yPixelScale;
 
-    if(item.strokeColor.gradient){
+    let col = new Color(0,0,1,1)
+
+    if(item.strokeColor){
+        if(item.strokeColor.gradient){
         //let xNorm = item.getNormalizedX(intersections[0].point.x)
-        let gradTime = getTimeForProjectedPoint(item.strokeColor.origin, item.strokeColor.destination, intersections[0].point)
-        col = item.getGradientColorAtX(clamp(gradTime,0,1))
+            let gradTime = getTimeForProjectedPoint(item.strokeColor.origin, item.strokeColor.destination, intersections[0].point)
+            col = item.getGradientColorAtX(clamp(gradTime,0,1))
+        }
+        else col = item.strokeColor
     }
-    else col = item.strokeColor
 
     //let yCoord = view.viewSize.height - intersections[0].point.y
     let yCoord = VIEW_HEIGHT - item.localToGlobal(intersections[0].point).y
-    console.log(yCoord)
+    //console.log(yCoord)
     let curvature = clamp(col.red, 0.01, 0.99);
     let midpoint = clamp(1 - col.green, 0.01, 0.99);
     let noise = clamp(col.red+col.green+col.blue-2,0,1)
-    //let resonance = 1-noise
-    //let pan = 0.5 - (intersections[0].point.y / view.viewSize.height)
-    //let firstItem = 
-    //let pan = (item.index / project.getItems({guide: false,className: "Path"}).length -2) * 2 - 1
-    let pan = 0;
+    let resonance = 1-noise/8
+    let pan = ((activeIDs.indexOf(item.id)) / activeIDs.length) - 0.5;
+    //let pan = (activeIDs.indexOf(item.id) / activeIDs.length) * (activeIDs.indexOf(item.id)%2) -1.0
+    //console.log(pan)
     let alpha = col.alpha;
     //prevAmp = currAmp
-    const amp = clamp(alpha / intersectionCount,0,0.5)
+    const amp = clamp(ampScale * alpha / (intersectionCount/2),0,0.5)
     //currAmp = amp
     //console.log(currAmp - prevAmp)
     let frequency = noteToFrequency(yCoord / yPixelScale + noteOffset + pitchBend);
@@ -326,8 +330,8 @@ function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDu
         })
     }
     
-    setOscillatorParams({osc, context: audioCtx, amp, pan, frequency, midpoint, curvature, noise, rampDuration
-        //resonance
+    setOscillatorParams({osc, context: audioCtx, amp, pan, frequency, midpoint, curvature, noise, rampDuration,
+        resonance
     })
     //let ampVal = (col.alpha * Math.min(0.8,deltaPos.length/100)) / intersectionCount;
 }
@@ -342,11 +346,14 @@ function intersectSymbolItem(touchPath,item,intersectionCount, pressure, instanc
         let ampScale = item.strokeWidth / yPixelScale;
         let pt = touchPath.localToGlobal(intersections[0].point)
         let gradPt = instance.globalToLocal(pt)
-        if(item.strokeColor.gradient){
-            let gradTime = getTimeForProjectedPoint(item.strokeColor.origin, item.strokeColor.destination, gradPt)
-            col = item.getGradientColorAtX(clamp(gradTime,0,1))
+        let col = new Color(0,0,1,1)
+        if(item.strokeColor){
+            if(item.strokeColor.gradient){
+                let gradTime = getTimeForProjectedPoint(item.strokeColor.origin, item.strokeColor.destination, gradPt)
+                col = item.getGradientColorAtX(clamp(gradTime,0,1))
+            }
+            else col = item.strokeColor
         }
-        else col = item.strokeColor
 
         let yCoord = view.viewSize.height - intersections[0].point.y
         let curvature = clamp(Math.max(0.5, col.red), 0.5, 0.99);
@@ -359,7 +366,7 @@ function intersectSymbolItem(touchPath,item,intersectionCount, pressure, instanc
         const amp = clamp(ampScale * touchScale * alpha / (intersectionCount * 2),0,1)
         let frequency = noteToFrequency(yCoord / yPixelScale + noteOffset);
         setOscillatorParams({osc, context: audioCtx, amp, pan, frequency, midpoint, curvature, noise, 
-            //resonance
+            resonance
         })
     }
 }

@@ -1,9 +1,10 @@
 midiInputs = null
 midiOutputs = null
 
-midiOutputChannels = [...new Array(15)].fill({id: null})
-
-console.log(midiOutputChannels)
+midiOutputChannels = [...new Array(15)]
+midiOutputChannels.forEach((e,i)=>{
+    midiOutputChannels[i] = {id: null}
+})
 
 MIDI_STATUS = {
     slide: [176, 74],
@@ -21,6 +22,12 @@ if (navigator.requestMIDIAccess) {
             input.onmidimessage = handleMidiInput;
         }
         midiOutputs = Array.from(access.outputs.values())
+
+        access.onstatechange = event => {
+            // Print information about the (dis)connected MIDI controller
+            console.log(event.port.name, event.port.manufacturer, event.port.state);
+        };
+
     }).catch(err => {
         console.log(err)
     })
@@ -34,6 +41,18 @@ function handleMidiInput(message){
     //console.log(performance.now())
     console.log(message.data)
 }
+
+function sendMidiMessage(output, data) {
+    output.send(data); // sends the message.
+}
+
+function noteOn(channel, noteNumber, velocity){
+
+}
+function noteOff(channel, noteNumber, velocity){
+    
+}
+
 
 // MPE
 // Bx 4A yy = slide
@@ -60,3 +79,4 @@ function handleMidiInput(message){
 5 >>> 1	2	    0101 >>> 1	    0010
 
 */
+
