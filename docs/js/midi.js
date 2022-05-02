@@ -14,6 +14,7 @@ MIDI_STATUS = {
     noteoff: 128
 }
 
+/*
 if (navigator.requestMIDIAccess) {
     navigator.requestMIDIAccess().then(access => {
         console.log('WebMIDI enabled')
@@ -35,6 +36,7 @@ if (navigator.requestMIDIAccess) {
 else {
     console.log("Your browser doesn't support WebMIDI")
 }
+*/
 
 function handleMidiInput(message){
     //console.log(message.timeStamp)

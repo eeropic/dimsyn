@@ -10,7 +10,7 @@ const GRID_SIZE = 20;
 const GRID_Y = 10;
 const BASENOTE = 0;
 
-const PPQ = 80  ;
+const PPQ = 80;
 const BPM = 120;
 
 const MIDI_NOTE_440 = 69;
@@ -26,7 +26,7 @@ const LOOP_LENGTH_QNOTES = 8;
 const SAMPLERATE = 48000;
 
 //const OSC_FADE_TIME = 1 / (SAMPLERATE / 128);
-const OSC_FADE_TIME = 0.002
+const OSC_FADE_TIME = 0.004
 
 const LOCATOR_STYLE = {
     strokeWidth: 1,

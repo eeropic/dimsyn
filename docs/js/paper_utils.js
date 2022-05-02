@@ -228,6 +228,21 @@ function importSVGCB(svgString){
     })
 }
 
+function exportSVG(){
+    let items = project.getItems({guide: false,className: "Path"})
+    items.forEach(item=>{
+        item.data = {}
+    })
+    let rect = new Path.Rectangle({
+        from: [0,0],
+        to: [2560,1280]
+    })
+    let group = new Group([rect, ...items], {insert:false})
+    let proj = group.exportSVG({asString: true})
+    return proj
+}
+
+
 function createTouchPath(frame){
     return new Path({
         applyMatrix: false,

@@ -1,5 +1,5 @@
 let noteLineCount = Math.floor(VIEW_HEIGHT / yPixelScale)
-
+//view.translate(0,-320)
 view.translate(320,-320)
 //view.zoom = 2
 function createNoteLines(){
@@ -11,7 +11,7 @@ function createNoteLines(){
                 guide: true,
                 strokeWidth: yPixelScale-1,
                 strokeColor: '#202020',
-                segments:[[0,yCoord],[view.viewSize.width, yCoord]],
+                segments:[[0,yCoord],[5120, yCoord]],
             })
             noteLines.push(noteLinePath)
         }
@@ -153,7 +153,7 @@ document.addEventListener('paste', function(e) {
 
 document.addEventListener('copy', function(e) {
     e.preventDefault()
-    console.log(project.exportSVG({asString: true}))
+    console.log(exportSVG())
 })
 
 function createButtonAction(container, id, callback){
@@ -627,7 +627,6 @@ drawTool.drawTouches = function(){
 }
 
 
-
 //view.autoUpdate = false
 
 view.onFrame = function(e){
@@ -709,6 +708,7 @@ function checkIntersections(){
                     }                 
                 }
 
+                /*
                 if(midiChannelNew.length && !midiChannelOld.length){
                     midiChannelNew[0].id = item.id
                     //var noteOnMessage = [0x90, 60, 0x7f];    // note on, middle C, full velocity
@@ -723,7 +723,7 @@ function checkIntersections(){
                     let outputChannel = midiChannelOld[0]
                     let outputChannelNr = midiOutputChannels.indexOf(midiChannelOld[0])
                 }
-
+                */
                 
             }
             else {
