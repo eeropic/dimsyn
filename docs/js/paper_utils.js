@@ -337,13 +337,7 @@ function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDu
     //currAmp = amp
     //console.log(currAmp - prevAmp)
     let frequency = noteToFrequency(yCoord / yPixelScale + noteOffset + pitchBend);
-    
-    if(midiOutputs.length){
-        midiOutputs.forEach(output => {
-            let note = VIEW_HEIGHT - (item.segments[0].point.y / yPixelScale)
-            
-        })
-    }
+
     
     setOscillatorParams({osc, context: audioCtx, amp, pan, frequency, midpoint, curvature, noise, rampDuration,
         resonance
