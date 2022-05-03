@@ -663,7 +663,8 @@ function checkIntersections(){
             drawTool.prevPosition = drawTool.playPosition
             let xTick = 1/60 * (BPM / 60) * PPQ;
             drawTool.playPosition += xTick
-            view.translate(-xTick,0)
+            //TODO autoscroll flag
+            //view.translate(-xTick,0)
         }
         
         //drawTool.touchPath.position.x = drawTool.playPosition % 1280
@@ -784,6 +785,7 @@ function checkIntersections(){
 var renderLink = document.getElementById('render-wav-button');
 var downloadLink = document.getElementById('download-wav-button');
 
+//TODO fix old rendering code to work with AudioWorklet
 //RENDERING
 renderLink.addEventListener('click', function () {
     var offlineCtx = new OfflineAudioContext(2, SAMPLERATE * (LOOP_LENGTH_QNOTES / (BPM / 60)), SAMPLERATE);
