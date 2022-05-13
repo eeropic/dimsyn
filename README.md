@@ -4,3 +4,14 @@
 
 Experimental browser based hybrid synthesizer-composition tool
 
+## Documentation
+
+User manual can be found at /docs
+
+The app located inside /docs is published to GitHub pages at https://eeropic.github.io/dimsyn
+
+### Local development
+
+Create locally trusted development certificates with https://github.com/FiloSottile/mkcert
+
+`node server.js`
