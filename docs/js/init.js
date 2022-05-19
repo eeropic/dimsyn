@@ -1,6 +1,6 @@
 let noteLineCount = Math.floor(VIEW_HEIGHT / yPixelScale)
 //view.translate(0,-320)
-view.translate(320,-320)
+//view.translate(320,-320)
 //view.zoom = 2
 function createNoteLines(){
     let noteLines = []
