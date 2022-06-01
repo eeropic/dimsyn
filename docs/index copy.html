@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<canvas id="canvas" resize hidpi="off"></canvas>
+<script src="lib/paper-full.js"></script>
+<script>
+
+paper.install(window)
+paper.setup('canvas');
+
+let touchStateColors = [
+    "white",    // MTTouchStateNotTracking = 0,
+    "red",      // MTTouchStateStartInRange = 1,
+    "orange",   // MTTouchStateHoverInRange = 2,
+    "yellow",   // MTTouchStateMakeTouch = 3,
+    "green",    // MTTouchStateTouching = 4,
+    "cyan",     // MTTouchStateBreakTouch = 5,
+    "magenta",  // MTTouchStateLingerInRange = 6,
+    "blue"      // MTTouchStateOutOfRange = 7
+]
+
+
+
+let stepLength = 1
+
+const lerp = (a,b,t) => (1-t) * a + t * b
+
+/* pointer event sizes
+// 41.68701171875
+// 62.530517578125
+// 83.41571044921875
+// 104.25921630859375
+// 125.10272216796875
+// 145.94622802734375
+// 166.8314208984375
+// 187.6749267578125
+// 208.5184326171875
+// 229.40362548828125
+// 250.24713134765625
+// 271.09063720703125
+// 291.93414306640625
+*/
+
+var sizeRanges = {
+  40(){
+    console.log(arguments.callee.name)
+  },
+  60(){
+    console.log(arguments.callee.name)
+  },
+  80(){
+
+  },
+  100(){
+
+  },
+  120(){
+
+  },
+  140(){
+
+  },
+  160(){
+
+  },
+  180(){
+
+  },
+  200(){
+
+  }
+}
+
+window.addEventListener("scroll", e => e.preventDefault())
+
+var panning = false
+
+var prevX = 0
+var prevY = 0
+
+var lastPoint = new Point(0,0)
+
+window.addEventListener("pointerdown", function(e){
+  if(e.pointerType == "touch"){
+        const {pressure, clientX, clientY, twist, width, height} = e
+
+
+        //console.log(pressure,clientX,clientY,twist,width,height)
+        //if(e.size >= 100)
+        console.log(e.width)
+        if(e.width < 60){
+          let kek = new Shape.Circle({
+            fillColor:"red",
+            radius: 40,
+            position: [e.clientX,e.clientY]
+          })
+        }
+        else if(e.width >= 60 && e.width < 80){
+          console.log('move point')
+        }
+        else if(e.width >= 80 && e.width < 100){
+          console.log('move item')
+        }
+        else if(e.width >= 100){
+          panning = true
+          console.log('panning')
+        }
+
+    }  
+})
+
+window.addEventListener("pointermove", function(e){
+    if(e.pointerType == "touch"){
+      let pt = new Point(e.clientX, e.clientY)
+
+      point = view.viewToProject(pt)
+
+      console.log(pt)
+      console.log(point)
+      deltaX = e.clientX - prevX
+      deltaY = e.clientY - prevY
+
+        const {pressure, clientX, clientY, twist, width, height} = e
+        //console.log(pressure,clientX,clientY,twist,width,height)
+        //if(e.size >= 100)
+        // 41.68701171875
+        // 62.530517578125
+        // 83.41571044921875
+        // 104.25921630859375
+        // 125.10272216796875
+        // 145.94622802734375
+        // 166.8314208984375
+        // 187.6749267578125
+        // 208.5184326171875
+        // 229.40362548828125
+        // 250.24713134765625
+        // 271.09063720703125
+        // 291.93414306640625
+        if(e.width >= 100 && panning){
+          //var point = view.projectToView(pt)
+          //var last = view.viewToProject(lastPoint);
+          //view.scrollBy([deltaX, deltaY]);
+          view.center = [view.center.x - deltaX, view.center.y - deltaY]
+          view.update()
+        }
+        prevX = e.clientX
+        prevY = e.clientY
+    }
+})
+
+window.addEventListener("pointerup", function(e){
+ 
+})
+view.autoUpdate = true
+
+view.onFrame = function(e){
+
+}
+</script>
+
+</body>
+</html>

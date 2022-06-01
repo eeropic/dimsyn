@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <style>
+      .bbox, .cls-1, .icon-stroke {
+        fill: none;
+      }
+
+      .cls-1, .icon-stroke {
+        stroke: #7f7f7f;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2.5px;
+      }
+
+      .cls-1 {
+        stroke-dasharray: 0 6;
+      }
+    </style>
+    <symbol id="_pencil" data-name="_pencil" viewBox="0 0 40 40">
+      <rect id="bounds" class="bbox" width="40" height="40"/>
+      <polygon class="icon-stroke" points="5 35 7.5 25 27.5 5 32.5 5 35 7.5 35 12.5 15 32.5 5 35"/>
+      <line class="icon-stroke" x1="7.5" y1="25" x2="15" y2="32.5"/>
+      <line class="icon-stroke" x1="25" y1="7.5" x2="32.5" y2="15"/>
+      <line class="icon-stroke" x1="5.9" y1="31.4" x2="8.6" y2="34.1"/>
+    </symbol>
+    <symbol id="_drawline" data-name="_drawline" viewBox="0 0 40 40">
+      <rect id="bounds-2" data-name="bounds" class="bbox" width="40" height="40"/>
+      <line class="icon-stroke" x1="5" y1="35" x2="35" y2="5"/>
+    </symbol>
+    <symbol id="_drawfree" data-name="_drawfree" viewBox="0 0 40 40">
+      <rect id="bounds-3" data-name="bounds" class="bbox" width="40" height="40"/>
+      <path class="icon-stroke" d="M5,15l8.75-8.75a5.3,5.3,0,0,1,7.5,0h0a5.3,5.3,0,0,1,0,7.5L8.75,26.25a5.3,5.3,0,0,0,0,7.5h0a5.3,5.3,0,0,0,7.5,0l6.926-6.926a5.3,5.3,0,0,1,7.993.568L35,32.5"/>
+    </symbol>
+    <symbol id="_eraser" data-name="_eraser" viewBox="0 0 40 40">
+      <rect id="bounds-4" data-name="bounds" class="bbox" width="40" height="40"/>
+      <line class="icon-stroke" x1="17.5" y1="35" x2="35" y2="35"/>
+      <polygon class="icon-stroke" points="35 17.5 25 7.5 5 27.5 12.5 35 17.5 35 35 17.5"/>
+      <line class="icon-stroke" x1="12.5" y1="20" x2="22.5" y2="30"/>
+    </symbol>
+    <symbol id="_marquee" data-name="_marquee" viewBox="0 0 40 40">
+      <rect id="bounds-5" data-name="bounds" class="bbox" width="40" height="40"/>
+      <rect class="cls-1" x="5" y="5" width="30" height="30"/>
+    </symbol>
+    <symbol id="_selection" data-name="_selection" viewBox="0 0 40 40">
+      <rect id="bounds-6" data-name="bounds" class="bbox" width="40" height="40"/>
+      <polygon class="icon-stroke" points="22.5 35 27.5 32.5 22.5 22.5 30 22.5 12.5 5 12.5 30 17.5 25 22.5 35"/>
+    </symbol>
+    <symbol id="_smudge" data-name="_smudge" viewBox="0 0 40 40">
+      <path class="icon-stroke" d="M26.769,18.115a2.308,2.308,0,0,0-3.217.062A2.358,2.358,0,0,0,23,20.656l-.017-.017a2.307,2.307,0,0,0-3.216.062,2.23,2.23,0,0,0,0,3.154h0l-6.31-6.31A2.231,2.231,0,1,0,10.3,20.7h0L21.344,31.742H16.076a2.231,2.231,0,1,0,0,4.462h0s7.264.186,9.045.186c3.652,0,4.707-.513,5.687-1.493l4.732-4.732a6.693,6.693,0,0,0,0-9.464l-5.048-5.048a2.23,2.23,0,0,0-3.154,0h0a2.356,2.356,0,0,0-.552,2.479Z"/>
+      <path class="icon-stroke" d="M6.205,30.393c3.536-3.536-4.741-11.078.563-16.382,6.245-6.245,11.72,4.1,17.487-1.667C25.617,10.981,31.935,5,31.935,5"/>
+      <path class="icon-stroke" d="M5,8c3.585-2.541,7.185-3.67,13.437-.282,1.293.7,1.624.725,3.488-1.139L23.5,5"/>
+      <rect id="bounds-7" data-name="bounds" class="bbox" width="40" height="40"/>
+    </symbol>
+  </defs>
+  <g id="all">
+    <use width="40" height="40" xlink:href="#_pencil"/>
+    <use id="drawline" width="40" height="40" xlink:href="#_drawline"/>
+    <use id="drawfree" width="40" height="40" xlink:href="#_drawfree"/>
+    <use id="eraser" width="40" height="40" xlink:href="#_eraser"/>
+    <use id="marquee" width="40" height="40" xlink:href="#_marquee"/>
+    <use id="selection" width="40" height="40" xlink:href="#_selection"/>
+    <use id="smudge" width="40" height="40" xlink:href="#_smudge"/>
+  </g>
+</svg>

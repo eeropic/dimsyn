@@ -1,11 +1,16 @@
 @font-face {
-  font-family: 'Montserrat';
-  src: url('../webfonts/Montserrat-VariableFont_wght.ttf') format("truetype-variations");
-}
+    font-family: 'Montserrat';
+    src: url('../assets/Montserrat-VariableFont_wght.ttf') format("truetype-variations");
+}  
 
 :root {
-    --gui-bg: #666;
-    --gui-fg: #FFF;
+    --gui-bg-dark: #333;
+    --gui-bg-light: #444;
+    --gui-fg-dark: #888;
+    --gui-fg-light: #BBB;
+    --gui-white: #FFF;
+    --b: #222;
+    --w: #666;    
 }
 
 html, body {
@@ -13,26 +18,16 @@ html, body {
 }
 
 body {
+    background: rgba(0.01,0.01,0.01,1);
     font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
-    background: #111;
     overflow: hidden;
     color: white;
     margin: 0;
     padding:0;
-    height: 100%;
     user-select: none;
     -webkit-user-select: none;
-    touch-action: none;
-}
-
-#hidden-canvas {
-    z-index: -2;
-    position: absolute;
-    background-color: transparent;
-    touch-action: none;
-    pointer-events: none;
-    visibility: hidden;
+    height: 100%;
 }
 
 #canvas {
@@ -45,107 +40,161 @@ body {
 canvas[resize] {
     width: 100%;
     height: 100%;
+}
+
+#gui {
+    position:absolute;
+    bottom:0;
+    left:0;
+    display:flex;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.dim-button {
+    display:block;
+    border-radius: 0.25rem;
+    border: none;
+    background: var(--gui-bg-dark);
+    text-align: center;
+    padding: 0.25rem;
+    width: 3rem;
+    height: 3rem;
+}
+
+input {
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+button {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+}
+
+input[type="radio"], button {
+    margin: 1px;
+    transition: all 0.1s;
+    opacity: 0.7;
+    filter: brightness(1.5);
+}
+
+input[type="radio"]:checked, input[type="checkbox"]:checked {
+    filter: invert();
+    opacity: 0.9;
+}
+
+input[type="radio"]:hover, input[type="checkbox"]:hover, button:hover {
+    opacity: 1.0;
+}
+
+input[type="radio"]:active, input[type="checkbox"], button:active {
+    transform: scale(0.95);
+}
+
+input[type="radio"]:before, input[type="checkbox"]:before  {
+	content: attr(value);
+    display:block;
+}
+
+.toolgroup {
+    display: flex;
+}
+
+.ds-icon:before {
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+
+button.ds-icon:before {
+    content: "";
+    padding: 0;
+}
+
+button.ds-icon {
+    z-index: 2;
+}
+
+#startbuttons {
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    text-align:center;
+    vertical-align: middle;
+    user-select: none;
+    -webkit-user-select: none;
     touch-action: none;
-}
-
-#start-button {
-  position: absolute;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  text-align:center;
-  vertical-align: middle;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: none;
-  display: flex;
-}
-
+    display: flex;
+  }
+  
 .inner-button {
     display:block;
     margin: auto;
     padding: 20px;
     font-size: 24px;
     border-radius: 2rem;
-    border: 1px solid var(--gui-fg);
-    opacity: 0.75;
+    border: 2px solid var(--gui-fg-light);
+    opacity: 0.6;
+    transition: 0.1s all;
 }
 
-#start-button-inner:hover {
-    opacity: 1;
-}
-
-#gui {
-    position:absolute;
-    max-height: 100%;
-    width: 2.75rem;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    height:auto;
-    background:transparent;
-    display:flex;
-    flex-direction: column;
-    user-select: none;
-    -webkit-user-select: none;
-    overflow: hidden;
-    padding:0.5rem;
-}
-
-.gui-button {
-    display:block;
-    border-radius: 0.25rem;
-    background: var(--gui-bg);
-    color: var(--gui-fg);
-    padding: 0.3rem 0.25rem;
-    text-align: center;
-    opacity: 0.75;
-    margin-bottom: 0.25rem;
-}
-
-.gui-button:hover {
-    opacity: 1;
-}
-
-.button.active {
-    opacity: 1;
-}
-
-#drop-area {
-    flex: 1;
-    width: 100%;
-    height: 100%;
-}
-#drop-area:hover {
-    border: 4px dashed red;
-}
-
-#filelist {
-    position: absolute;
-    top: 3rem;
-    left: 3rem;
-    right: 3rem;
-    bottom: 3rem;
-    background: red;
-    opacity: 0.5;
-    padding: 1rem;
-    touch-action: none;
-}
-
-#filelist svg {
-    width: 20%;
-    height: auto;
-    display:inline-block;
-    border: 1px solid cyan;
-    box-sizing: border-box;
-    margin: 1rem;
+.inner-button:hover {
+    opacity: 1.0;
 }
 
 .hidden {
-    pointer-events: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: none;
-    visibility:hidden;
+    visibility: hidden;
 }
+
+#colorcommands > label > input {
+    border-radius: 2rem;
+    box-sizing: border-box;
+}
+
+#colorcommands > label > input {
+}
+
+#colorcommands > label > input:checked {
+    filter: none;
+    box-shadow: 0px 0px 0px 4px white inset;
+    box-sizing: border-box;    
+}
+
+#colorcommands > label > input:checked::before {
+    filter: invert();
+}
+
+#sine {
+    background: purple;
+}
+
+#sawtooth {
+    background: cyan;
+}
+
+#square {
+    background: red;
+}
+
+#triangle {
+    background: blue;
+}
+
+#pwm {
+    background: #FFbb00;
+}
+
+#noise {
+    background: gray;
+}
+
+/* add this in the top of the styles inside the svg icons bundle
+use:not(:target) { display: none;}
+*/

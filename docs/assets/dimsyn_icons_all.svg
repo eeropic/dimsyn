@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <style>
+        use:not(:target) { display: none;}
+      .bbox, .icon-stroke, .icon-stroke-2, .icon-stroke--dashed {
+        fill: none;
+      }
+
+      .icon-stroke, .icon-stroke--dashed {
+        stroke: #7f7f7f;
+      }
+
+      .icon-stroke, .icon-stroke-2, .icon-stroke--dashed {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2.5px;
+      }
+
+      .cls-1 {
+        fill: #7f7f7f;
+      }
+
+      .icon-stroke--dashed {
+        stroke-dasharray: 0 6;
+      }
+
+      .icon-stroke-2 {
+        stroke: #000;
+      }
+    </style>
+    <symbol id="_download_svg" data-name="_download_svg" viewBox="0 0 40 40">
+      <rect id="bounds" class="bbox" width="40" height="40"/>
+      <polyline class="icon-stroke" points="23 35 35 35 35 12.5 27.5 5 5 5 5 35 17 35"/>
+      <polyline class="icon-stroke" points="28 5.5 28 12 34.5 12"/>
+      <polygon class="icon-stroke" points="17 26.5 17 30.5 12.5 30.5 20 38 27.5 30.5 23 30.5 23 26.5 17 26.5"/>
+      <g>
+        <path class="cls-1" d="M12.859,23.226a4.891,4.891,0,0,1-2.166-.463l-.113-.055V20.83l.282.125a8.489,8.489,0,0,0,1.227.456,3.526,3.526,0,0,0,.89.129,1.16,1.16,0,0,0,.67-.158.474.474,0,0,0,.19-.42.445.445,0,0,0-.084-.268,1.159,1.159,0,0,0-.3-.274,8.44,8.44,0,0,0-.926-.482,4.725,4.725,0,0,1-1.054-.637,2.485,2.485,0,0,1-.584-.737,2.141,2.141,0,0,1-.223-1,2.1,2.1,0,0,1,.731-1.684,2.946,2.946,0,0,1,1.954-.6,4.529,4.529,0,0,1,1.142.142,7.745,7.745,0,0,1,1.116.391l.181.079-.654,1.576-.184-.076a7.06,7.06,0,0,0-.944-.327,2.9,2.9,0,0,0-.707-.09.821.821,0,0,0-.547.157.476.476,0,0,0-.167.386.462.462,0,0,0,.065.253.874.874,0,0,0,.248.238,8.805,8.805,0,0,0,.959.5,4.082,4.082,0,0,1,1.483,1.045,2.134,2.134,0,0,1,.423,1.335,2.1,2.1,0,0,1-.791,1.722A3.31,3.31,0,0,1,12.859,23.226Z"/>
+        <path class="cls-1" d="M18.6,23.125l-2.626-7.74h2l1.425,4.508q.095.318.2.719c.052-.21.115-.447.189-.713l1.438-4.514h2l-2.631,7.74Z"/>
+        <path class="cls-1" d="M26.824,23.226a3.439,3.439,0,0,1-2.687-1.043,4.274,4.274,0,0,1-.927-2.938,3.9,3.9,0,0,1,1.077-2.914,4.066,4.066,0,0,1,2.959-1.051,5.691,5.691,0,0,1,2.258.468l.181.078-.675,1.626-.192-.1a3.516,3.516,0,0,0-1.582-.38,1.86,1.86,0,0,0-1.468.611,2.449,2.449,0,0,0-.556,1.689,2.764,2.764,0,0,0,.447,1.7,1.5,1.5,0,0,0,1.266.552,4.847,4.847,0,0,0,.788-.067V20.3H26.322V18.6h3.313v4.15L29.5,22.8a8.454,8.454,0,0,1-1.366.332A8.967,8.967,0,0,1,26.824,23.226Z"/>
+      </g>
+    </symbol>
+    <symbol id="_pencil" data-name="_pencil" viewBox="0 0 40 40">
+      <rect id="bounds-2" data-name="bounds" class="bbox" width="40" height="40"/>
+      <polygon class="icon-stroke" points="5 35 7.5 25 27.5 5 32.5 5 35 7.5 35 12.5 15 32.5 5 35"/>
+      <line class="icon-stroke" x1="7.5" y1="25" x2="15" y2="32.5"/>
+      <line class="icon-stroke" x1="25" y1="7.5" x2="32.5" y2="15"/>
+      <line class="icon-stroke" x1="5.9" y1="31.4" x2="8.6" y2="34.1"/>
+    </symbol>
+    <symbol id="_drawline" data-name="_drawline" viewBox="0 0 40 40">
+      <rect id="bounds-3" data-name="bounds" class="bbox" width="40" height="40"/>
+      <line class="icon-stroke" x1="5" y1="35" x2="35" y2="5"/>
+    </symbol>
+    <symbol id="_drawfree" data-name="_drawfree" viewBox="0 0 40 40">
+      <rect id="bounds-4" data-name="bounds" class="bbox" width="40" height="40"/>
+      <path class="icon-stroke" d="M5,15l8.75-8.75a5.3,5.3,0,0,1,7.5,0h0a5.3,5.3,0,0,1,0,7.5L8.75,26.25a5.3,5.3,0,0,0,0,7.5h0a5.3,5.3,0,0,0,7.5,0l6.926-6.926a5.3,5.3,0,0,1,7.993.568L35,32.5"/>
+    </symbol>
+    <symbol id="_eraser" data-name="_eraser" viewBox="0 0 40 40">
+      <rect id="bounds-5" data-name="bounds" class="bbox" width="40" height="40"/>
+      <line class="icon-stroke" x1="17.5" y1="35" x2="35" y2="35"/>
+      <polygon class="icon-stroke" points="35 17.5 25 7.5 5 27.5 12.5 35 17.5 35 35 17.5"/>
+      <line class="icon-stroke" x1="12.5" y1="20" x2="22.5" y2="30"/>
+    </symbol>
+    <symbol id="_clear" data-name="_clear" viewBox="0 0 40 40">
+      <rect id="bounds-6" data-name="bounds" class="bbox" width="40" height="40"/>
+      <line class="icon-stroke" x1="7.5" y1="10" x2="32.5" y2="10"/>
+      <path class="icon-stroke" d="M10,14.5v18A2.5,2.5,0,0,0,12.5,35h15A2.5,2.5,0,0,0,30,32.5v-18"/>
+      <line class="icon-stroke" x1="15" y1="15" x2="15" y2="30"/>
+      <line class="icon-stroke" x1="20" y1="15" x2="20" y2="30"/>
+      <line class="icon-stroke" x1="25" y1="15" x2="25" y2="30"/>
+      <polyline class="icon-stroke" points="15 10 17.5 5 22.5 5 25 10"/>
+    </symbol>
+    <symbol id="_marquee" data-name="_marquee" viewBox="0 0 40 40">
+      <rect id="bounds-7" data-name="bounds" class="bbox" width="40" height="40"/>
+      <rect class="icon-stroke--dashed" x="5" y="5" width="30" height="30"/>
+    </symbol>
+    <symbol id="_selection" data-name="_selection" viewBox="0 0 40 40">
+      <rect id="bounds-8" data-name="bounds" class="bbox" width="40" height="40"/>
+      <polygon class="icon-stroke" points="22.5 35 27.5 32.5 22.5 22.5 30 22.5 12.5 5 12.5 30 17.5 25 22.5 35"/>
+    </symbol>
+    <symbol id="_smudge" data-name="_smudge" viewBox="0 0 40 40">
+      <path class="icon-stroke" d="M26.769,18.115a2.308,2.308,0,0,0-3.217.062A2.358,2.358,0,0,0,23,20.656l-.017-.017a2.307,2.307,0,0,0-3.216.062,2.23,2.23,0,0,0,0,3.154h0l-6.31-6.31A2.231,2.231,0,1,0,10.3,20.7h0L21.344,31.742H16.076a2.231,2.231,0,1,0,0,4.462h0s7.264.186,9.045.186c3.652,0,4.707-.513,5.687-1.493l4.732-4.732a6.693,6.693,0,0,0,0-9.464l-5.048-5.048a2.23,2.23,0,0,0-3.154,0h0a2.356,2.356,0,0,0-.552,2.479Z"/>
+      <path class="icon-stroke" d="M6.205,30.393c3.536-3.536-4.741-11.078.563-16.382,6.245-6.245,11.72,4.1,17.487-1.667C25.617,10.981,31.935,5,31.935,5"/>
+      <path class="icon-stroke" d="M5,8c3.585-2.541,7.185-3.67,13.437-.282,1.293.7,1.624.725,3.488-1.139L23.5,5"/>
+      <rect id="bounds-9" data-name="bounds" class="bbox" width="40" height="40"/>
+    </symbol>
+    <symbol id="_playhead" data-name="_playhead" viewBox="0 0 40 40">
+      <rect id="bounds-11" data-name="bounds" class="bbox" width="40" height="40"/>
+      <polygon class="icon-stroke" points="22 14 22 18 11.85 18 9.75 25 22 25 22 29 34.5 21.5 22 14"/>
+      <line class="icon-stroke" x1="7.5" y1="32.5" x2="15" y2="7.5"/>
+      <circle class="icon-stroke" cx="15" cy="7.5" r="2.5"/>
+      <circle class="icon-stroke" cx="7.5" cy="32.5" r="2.5"/>
+    </symbol>
+    <symbol id="_undo" data-name="_undo" viewBox="0 0 40 40">
+      <rect id="bounds-12" data-name="bounds" class="bbox" width="40" height="40"/>
+      <path class="icon-stroke" d="M7.5,21.5A12.5,12.5,0,1,0,20,9H7.5"/>
+      <polyline class="icon-stroke" points="12.5 4 7.5 9 12.5 14"/>
+    </symbol>
+    <symbol id="_clone" data-name="_clone" viewBox="0 0 40 40">
+      <rect id="bounds-14" data-name="bounds" class="bbox" width="40" height="40"/>
+      <rect class="icon-stroke" x="7.5" y="12.5" width="20" height="20"/>
+      <rect class="icon-stroke" x="12.5" y="7.5" width="20" height="20"/>
+    </symbol>
+    <symbol id="_play" data-name="_play" viewBox="0 0 40 40">
+      <rect id="bounds-15" data-name="bounds" class="bbox" width="40" height="40"/>
+      <polygon class="icon-stroke" points="10 7.5 32.5 20 10 32.5 10 7.5"/>
+    </symbol>
+    <symbol id="_sine" data-name="_sine" viewBox="0 0 40 40">
+      <rect id="bounds-16" data-name="bounds" class="bbox" width="40" height="40"/>
+      <path class="icon-stroke-2" d="M10,21.324c10-29.663,10,27.258,20,0"/>
+    </symbol>
+    <symbol id="_triangle" data-name="_triangle" viewBox="0 0 40 40">
+      <rect id="bounds-17" data-name="bounds" class="bbox" width="40" height="40"/>
+      <polyline class="icon-stroke-2" points="10 20 15 10 25 30 30 20"/>
+    </symbol>
+    <symbol id="_square" data-name="_square" viewBox="0 0 40 40">
+      <rect id="bounds-18" data-name="bounds" class="bbox" width="40" height="40"/>
+      <polyline class="icon-stroke-2" points="10 30 10 10 20 10 20 30 30 30 30 10"/>
+    </symbol>
+    <symbol id="_sawtooth" data-name="_sawtooth" viewBox="0 0 40 40">
+      <rect id="bounds-19" data-name="bounds" class="bbox" width="40" height="40"/>
+      <polyline class="icon-stroke-2" points="10 30 10 10 30 30"/>
+    </symbol>
+    <symbol id="_pwm" data-name="_pwm" viewBox="0 0 40 40">
+      <rect id="bounds-20" data-name="bounds" class="bbox" width="40" height="40"/>
+      <polyline class="icon-stroke-2" points="10 20 10 10 15 10 15 30 30 30 30 20"/>
+    </symbol>
+    <symbol id="_noise" data-name="_noise" viewBox="0 0 40 40">
+      <rect id="bounds-21" data-name="bounds" class="bbox" width="40" height="40"/>
+      <polyline class="icon-stroke-2" points="10 22.5 10 17.5 12.5 10 15 27.5 17.5 22.5 20 27.5 20 17.5 22.5 15 25 25 27.5 10 30 30 32.5 22.5 32.5 20"/>
+    </symbol>
+    <symbol id="_spray" data-name="_spray" viewBox="0 0 40 40">
+      <rect id="bounds-22" data-name="bounds" class="bbox" width="40" height="40"/>
+      <rect class="icon-stroke" x="5" y="15" width="12.5" height="20" rx="2"/>
+      <line class="icon-stroke" x1="20" y1="10" x2="35" y2="5"/>
+      <line class="icon-stroke" x1="20" y1="10" x2="35" y2="10"/>
+      <line class="icon-stroke" x1="20" y1="10" x2="35" y2="15"/>
+      <line class="icon-stroke" x1="20" y1="10" x2="35" y2="20"/>
+      <line class="icon-stroke" x1="20" y1="10" x2="35" y2="25"/>
+      <polygon class="icon-stroke" points="7.5 15 7.5 10 15 7.5 15 15 7.5 15"/>
+    </symbol>
+  </defs>
+  <g id="icons">
+    <use width="40" height="40" transform="translate(0.5 0.262)" xlink:href="#_download_svg"/>
+  </g>
+  <g id="all">
+    <use id="pencil" width="40" height="40" xlink:href="#_pencil"/>
+    <use id="drawline" width="40" height="40" xlink:href="#_drawline"/>
+    <use id="drawfree" width="40" height="40" xlink:href="#_drawfree"/>
+    <use id="eraser" width="40" height="40" xlink:href="#_eraser"/>
+    <use id="clear" width="40" height="40" xlink:href="#_clear"/>
+    <use id="marquee" width="40" height="40" xlink:href="#_marquee"/>
+    <use id="selection" width="40" height="40" xlink:href="#_selection"/>
+    <use id="smudge" width="40" height="40" xlink:href="#_smudge"/>
+    <use id="download_svg" width="40" height="40" xlink:href="#_download_svg"/>
+    <use id="playhead" width="40" height="40" xlink:href="#_playhead"/>
+    <use id="undo" width="40" height="40" xlink:href="#_undo"/>
+    <use id="redo" width="40" height="40" transform="matrix(-1, 0, 0, 1, 40, 0)" xlink:href="#_undo"/>
+    <use id="clone" width="40" height="40" xlink:href="#_clone"/>
+    <use id="play" width="40" height="40" xlink:href="#_play"/>
+    <use id="sine" width="40" height="40" xlink:href="#_sine"/>
+    <use id="triangle" width="40" height="40" xlink:href="#_triangle"/>
+    <use id="square" width="40" height="40" xlink:href="#_square"/>
+    <use id="sawtooth" width="40" height="40" xlink:href="#_sawtooth"/>
+    <use id="pwm" width="40" height="40" xlink:href="#_pwm"/>
+    <use id="noise" width="40" height="40" xlink:href="#_noise"/>
+    <use id="spray" width="40" height="40" xlink:href="#_spray"/>
+  </g>
+</svg>

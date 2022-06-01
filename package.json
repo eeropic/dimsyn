@@ -1,10 +1,10 @@
 {
   "dependencies": {
+    "eiows": "^4.0.1",
     "express": "^4.17.2",
     "https": "^1.0.0",
     "midi": "^2.0.0",
-    "osc": "^2.4.2",
-    "ws": "^8.5.0"
+    "osc": "^2.4.3"
   },
   "name": "dimsyn",
   "version": "0.0.1",
