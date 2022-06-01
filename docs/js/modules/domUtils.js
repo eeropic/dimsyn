@@ -108,6 +108,15 @@ function createTools() {
     return toolStack
 }
 
+const getElementOffset = elem => {
+    let rect = elem.getBoundingClientRect();
+    var offset = {
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
+    };
+    return offset
+}
+
 
 export {
     elementById,
@@ -116,4 +125,5 @@ export {
     createToolButtonElement,
     createElement,
     createTools,
+    getElementOffset
 }

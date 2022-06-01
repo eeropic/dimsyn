@@ -147,9 +147,9 @@ const getElementOffset = elem => {
 }
 
 let mainTool = new DimTool({
-    eventTypes: ['keydown', 'keyup', 'wheel', 
-    'gesturestart','gesturechange','gestureend',
+    eventTypes: ['keydown', 'keyup', 
     'pointerdown','pointerup','pointercancel',
+    'gesturestart','gesturechange','gestureend','wheel',
     'touchstart','copy','paste'],
     eventHandler: {
         copy(e){
@@ -169,28 +169,10 @@ let mainTool = new DimTool({
             
         },
         gesturestart(e){
-            e.event.preventDefault()
-            this.viewScaling = new Point(view.scaling.x, view.scaling.y)
-            this.viewCenter = new Point(view.center.x, view.center.y)
-            this.gestureStartPointView = new Point(e.point.x,e.point.y)
-            this.gestureStartPointNative = new Point(e.event.clientX, e.event.clientY)
-            this.gesturePosPrev = new Point(e.event.clientX, e.event.clientY)
-            this.gesturePosCurr = new Point(e.event.clientX, e.event.clientY)
+            e.event.preventDefault()            
         },
         gesturechange(e){
-            e.event.preventDefault()
-            // pinch to zoom
-            this.gesturePosPrev = this.gesturePosCurr
-            this.gesturePosCurr = new Point(e.event.clientX, e.event.clientY)
-            let delta = this.gesturePosCurr.subtract(this.gesturePosPrev)
-
-            if(this.touches.length == 2 && project.selectedItems.length == 0){
-                view.center = this.viewCenter
-                view.scaling = this.viewScaling
-                view.scale(e.event.scale, this.gestureStartPointView)
-                this.viewCenter.x -= delta.x / view.getZoom()
-                this.viewCenter.y -= -delta.y / view.getZoom()
-            }
+            e.event.preventDefault()            
         },
         gestureend(e){
             e.event.preventDefault()
@@ -228,26 +210,6 @@ let mainTool = new DimTool({
             // TODO handle the native pointer event and additional props somehow (native paper points for each event)
             e.event.preventDefault();
             e.event.stopPropagation();
-            if (!e.event.shiftKey && !e.event.ctrlKey) {
-            }
-            else if (e.event.shiftKey && !e.event.ctrlKey) {
-                view.translate(-e.event.deltaX, e.event.deltaY)
-                view.center = new Point(
-                    clamp(view.center.x, 320, 640),
-                    clamp(view.center.y, 0, 1280)
-                )
-            }
-            else if (!e.event.shiftKey && e.event.ctrlKey) {
-                let offset = getElementOffset(canvas),
-                    point = view.viewToProject(
-                        new Point(e.event.offsetX, e.event.offsetY).subtract(offset.left, offset.top)
-                    ),
-                    delta = e.event.deltaY || 0,
-                    scale = 1 - delta / 100;
-                view.scale(scale, point);
-                view.scaling.x = clamp(view.scaling.x, 0.25, 4.0)
-                view.scaling.y = clamp(view.scaling.y, -4.0, -0.25)
-            }
         }
     },
     targetElement: window
@@ -255,7 +217,8 @@ let mainTool = new DimTool({
 
 mainTool.activate()
 
-elementById.triangle.checked = true
+
+//elementById.triangle.checked = true
 project.currentStyle.strokeColor = "#0000FF"
 
 var ws = new WebSocket("wss://" + location.host);

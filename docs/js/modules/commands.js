@@ -7,11 +7,9 @@ const transportCommands = {
     play: {
         eventHandler:{
             change(){
-                console.log('change')
                 ds.playing = !ds.playing
                 let playheads = getItemsByName(project, "Path", "playhead", false)
                 playheads.forEach(item => {
-                    console.log(item)
                     if(ds.playing)
                         item.opacity = 1
                     else item.opacity = 0.5
@@ -23,6 +21,7 @@ const transportCommands = {
 }
 
 const projectCommands = {
+    /*
     undo: {
         eventHandler:{
             pointerdown(){
@@ -48,6 +47,7 @@ const projectCommands = {
         },
         description: "Redo"
     },
+    */
     clear: {
         eventHandler:{         
             pointerdown(){
@@ -133,11 +133,13 @@ const fileCommands = {
 
 var commands = [
 //  {   id: "filecommands", type: "button", definitions: fileCommands},
+/*
     {
         id: "colorcommands",
         type: "radio",
         definitions: colorCommands
     },
+    */
     {
         id: "transportcommands",
         type: "checkbox",

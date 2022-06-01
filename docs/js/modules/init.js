@@ -9,8 +9,8 @@ var DS = {
         sawtooth: [0.1,0.9,0.9],
         noise: [1,1,1]
     },
-    yPixelScale: 10,
-    noteOffset: 0,
+    yPixelScale: 20,
+    noteOffset: 36,
     MAX_UNDOS: 10,
     playing: false,
     playPosition: 0,

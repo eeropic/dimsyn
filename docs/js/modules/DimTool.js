@@ -41,17 +41,26 @@ export default class DimTool {
     handleEvent(e) {
         let point = new Point(e.clientX, e.clientY)
 
-        if (e.type == 'pointerdown' && !this.hasActivePointer(e.pointerId)){
+        if (e.type == 'pointerdown' && !this.hasActivePointer(e.pointerId) && e.pointerType == "touch"){
             this.touches.push({ id: e.pointerId, point })
         }
         
+        if (e.type == 'pointermove'){
+            let currentPointer = this.touches.filter(touch => touch.id == e.pointerId)
+            if(currentPointer.length){
+                currentPointer[0].point = point
+            }            
+        }
+
         if (e.type == 'touchstart'){
+            /*
             for(let j = 0; j < this.touches.length; j++){
                 let id = this.touches[j].id
                 if([...e.touches].filter(touch => touch.identifier == id).length == 0){
                     this.updatePointers(id)
                 }
             }
+            */
         }
         
         
@@ -65,5 +74,9 @@ export default class DimTool {
 
         if (e.type == 'pointerup' || e.type == 'pointercancel')
             this.updatePointers(e.pointerId)
+
+        if(e.pointerType == "touch"){
+            console.log(this.touches)
+        }
     }
 }

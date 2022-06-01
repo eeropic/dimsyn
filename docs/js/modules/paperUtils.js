@@ -150,6 +150,16 @@ const createNotePath = function (e, selected) {
     })
 }
 
+const createPlayhead = function(){
+    return new Path({
+        strokeWidth: 1,
+        strokeColor: "cyan",
+        name: "playhead",
+        guide: false,
+        segments: [[200,0],[0,600]]
+    })
+}
+
 function paramsFromColor(col){
     let noise = clamp(col.red + col.green + col.blue - 2, 0, 1);
     return {
@@ -212,5 +222,5 @@ function updateUndo(){
 export {
     getItemsByName, getTimeForProjectedPoint, getTouchTiltXY, exportProject, importProject,
     importSVG, importSVGCB, exportSVG, createTouchPath,
-    createNotePath, intersectItem, createPlayGroup, getCanvasItems, updateUndo
+    createNotePath, createPlayhead, intersectItem, createPlayGroup, getCanvasItems, updateUndo
 }

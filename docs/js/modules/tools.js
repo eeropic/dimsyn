@@ -1,27 +1,36 @@
 import { DS } from './init.js';
 import { debugDot, debugLine, debugText } from './debugUtils.js';
-import { createNotePath, getCanvasItems, updateUndo } from './paperUtils.js';
-import { softRoundPointY } from './mathUtils.js';
+import { createNotePath, createPlayhead, getCanvasItems, updateUndo } from './paperUtils.js';
+import { clamp, softRoundPointY } from './mathUtils.js';
+import { getElementOffset } from './domUtils.js';
 
 const drawingTools = {
+ /*
     playhead: {
         eventHandler: {
             pointerdown(e) {
                 if(this.playhead == null){
-                    this.playhead = new Path({
-                        strokeWidth: 1,
-                        strokeColor: "cyan",
-                        name: "playhead",
-                        guide: false,
-                        segments: [[200,0],[0,600]]
-                    })
+                    this.playhead = createPlayhead()
                 }
                 this.playhead.opacity = 1.0
                 this.playhead.position = e.point
             },
             pointermove(e) {
-                if(this.playhead && e.event.buttons)
-                    this.playhead.position = e.point
+                if(this.playhead && e.event.buttons){
+                    if(e.event.pointerType == "touch"){
+                        if(this.touches.length > 1){
+                            this.playhead.segments = this.touches.map(touch => {
+                                return new Segment({point: view.projectToView(touch.point)})
+                            })
+                        }
+                        else {
+                            this.playhead.position = e.point
+                        }
+                    }
+                    else {
+                        this.playhead.position = e.point
+                    }
+                }
             },
             pointerup(e) {
                 if(this.playhead){
@@ -111,6 +120,7 @@ const drawingTools = {
         },
         description: "Select tool"
     },
+    */
     pencil: {
         eventTypes: ['gesturechange','pointerdown','pointermove','pointerup'],
         eventHandler: {
@@ -125,20 +135,32 @@ const drawingTools = {
             },
             pointerdown(e) {
                 if(e.event.pointerType == "touch"){
-                    if(e.hit && e.hit.item){
-                        if(this.touches.length == 1){
-                            e.hit.item.selected = true
-                            project.selectedItems.forEach(item => {
-                                item.setDragPivot(e.point)
-                                item.data.rotation = item.rotation
-                                item.data.scaling = item.scaling
-                                item.data.pointerId = e.event.pointerId
-                            })
+                    if(this.touches.length == 1){
+                        if(e.hit && e.hit.item){
+                            if(e.hit.item.name != "playhead"){
+                                e.hit.item.selected = true
+                                project.selectedItems.forEach(item => {
+                                    item.setDragPivot(e.point)
+                                    item.data.rotation = item.rotation
+                                    item.data.scaling = item.scaling
+                                    item.data.pointerId = e.event.pointerId
+                                })
+                            }
                         }
+                        else project.deselectAll()
                     }
                     else {
-                        if(this.touches.length == 1)
-                            project.deselectAll()
+                        if(!project.selectedItems.length){
+                            if(this.playhead == null){
+                                this.playhead = createPlayhead()
+                            }
+                            else {
+                                this.playhead.segments = this.touches.map(touch => {
+                                    return new Segment({point: view.projectToView(touch.point)})
+                                })                                
+                            }
+                            this.playhead.opacity = 1.0
+                        }
                     }
                 }
                 else {
@@ -147,11 +169,20 @@ const drawingTools = {
             },
             pointermove(e) {
                 if(e.event.pointerType == "touch"){
-                    if(this.touches.length <= 2){
+                    if(this.touches.length == 1){
                         project.selectedItems.forEach(item => {
                             if(e.event.pointerId == item.data.pointerId)
                                 item.position = e.point
                         })
+                    }
+                    else {
+                        if(!project.selectedItems.length){
+                            if(this.playhead && e.event.buttons){
+                                this.playhead.segments = this.touches.map(touch => {
+                                    return new Segment({point: view.projectToView(touch.point)})
+                                })
+                            }
+                        }
                     }
                 }
                 else {
@@ -175,17 +206,22 @@ const drawingTools = {
             },
             pointerup(e) {
                 if(e.event.pointerType == "touch"){
-                    project.selectedItems.forEach(item => {
-                        //item.resetPivot()
-                        item.data.rotation = item.rotation
-                        item.data.scaling = item.scaling
-                        item.data.pointerId = null
-                    })                    
+                    if(this.touches.length == 1){
+                        project.selectedItems.forEach(item => {
+                            //item.resetPivot()
+                            item.data.rotation = item.rotation
+                            item.data.scaling = item.scaling
+                            item.data.pointerId = null
+                        })        
+                    }  
+                    else {
+                        this.playhead.opacity = 0
+                    }          
                 }
                 else {
                     if(this.path && !e.event.metaKey){
                         this.path.simplify()
-                        this.path.simplifyGradient()
+                        //this.path.simplifyGradient()
                     }
                 }
                 updateUndo()
@@ -193,6 +229,7 @@ const drawingTools = {
         },
         description: "Draw freehand"
     },
+    /*
     drawline: {
         eventTypes: ['keydown','pointerdown','pointermove','pointerup'],
         eventHandler: {
@@ -233,6 +270,9 @@ const drawingTools = {
         },
         description: "Draw line"
     },
+    */
+
+    /*
     spray: {
         eventHandler: {
             pointerdown(e) {
@@ -253,6 +293,9 @@ const drawingTools = {
         },
         description: "Spray (recolor)"
     },
+
+    */
+    /* TODO: ERASER TOOL
     eraser: {
         eventHandler: {
             pointerdown(e) {
@@ -266,7 +309,70 @@ const drawingTools = {
             }
         },
         description: "Erase"
+    },
+    */
+
+    /*
+    zoompan: {
+        eventTypes: ['wheel', 
+        'gesturestart','gesturechange','gestureend'],
+        eventHandler: {
+            gesturestart(e){
+                e.event.preventDefault()            
+                this.viewScaling = new Point(view.scaling.x, view.scaling.y)
+                this.viewCenter = new Point(view.center.x, view.center.y)
+                this.gestureStartPointView = new Point(e.point.x,e.point.y)
+                this.gestureStartPointNative = new Point(e.event.clientX, e.event.clientY)
+                this.gesturePosPrev = new Point(e.event.clientX, e.event.clientY)
+                this.gesturePosCurr = new Point(e.event.clientX, e.event.clientY)
+            },
+            gesturechange(e){
+                e.event.preventDefault()            
+                    // pinch to zoom
+                this.gesturePosPrev = this.gesturePosCurr
+                this.gesturePosCurr = new Point(e.event.clientX, e.event.clientY)
+                let delta = this.gesturePosCurr.subtract(this.gesturePosPrev)
+
+                if(this.touches.length == 2 && project.selectedItems.length == 0){
+                    view.center = this.viewCenter
+                    view.scaling = this.viewScaling
+                    view.scale(e.event.scale, this.gestureStartPointView)
+                    this.viewCenter.x -= delta.x / view.getZoom()
+                    this.viewCenter.y -= -delta.y / view.getZoom()
+                }
+            },
+            gestureend(e){
+                e.event.preventDefault()
+            },
+            wheel(e){
+                // TODO handle the native pointer event and additional props somehow (native paper points for each event)
+                e.event.preventDefault();
+                e.event.stopPropagation();
+                if (!e.event.shiftKey && !e.event.ctrlKey) {
+                }
+                else if (e.event.shiftKey && !e.event.ctrlKey) {
+                    view.translate(-e.event.deltaX, e.event.deltaY)
+                    view.center = new Point(
+                        clamp(view.center.x, 320, 640),
+                        clamp(view.center.y, 0, 1280)
+                    )
+                }
+                else if (!e.event.shiftKey && e.event.ctrlKey) {
+                    let offset = getElementOffset(canvas),
+                        point = view.viewToProject(
+                            new Point(e.event.offsetX, e.event.offsetY).subtract(offset.left, offset.top)
+                        ),
+                        delta = e.event.deltaY || 0,
+                        scale = 1 - delta / 100;
+                    view.scale(scale, point);
+                    view.scaling.x = clamp(view.scaling.x, 0.25, 4.0)
+                    view.scaling.y = clamp(view.scaling.y, -4.0, -0.25)
+                }
+            }
+        },
+        targetElement: window        
     }
+    */
 }
 
 const modifierTools = {
