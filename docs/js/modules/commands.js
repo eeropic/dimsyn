@@ -21,7 +21,6 @@ const transportCommands = {
 }
 
 const projectCommands = {
-    /*
     undo: {
         eventHandler:{
             pointerdown(){
@@ -47,7 +46,6 @@ const projectCommands = {
         },
         description: "Redo"
     },
-    */
     clear: {
         eventHandler:{         
             pointerdown(){
@@ -133,13 +131,12 @@ const fileCommands = {
 
 var commands = [
 //  {   id: "filecommands", type: "button", definitions: fileCommands},
-/*
+
     {
         id: "colorcommands",
         type: "radio",
         definitions: colorCommands
     },
-    */
     {
         id: "transportcommands",
         type: "checkbox",

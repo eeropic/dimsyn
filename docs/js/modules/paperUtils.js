@@ -68,6 +68,7 @@ function importSVGCB(svgString) {
     svg.scale(1,-1, new Point(0,640))
     svg.children[0].remove()
     let items = svg.parent.insertChildren(svg.index, svg.removeChildren());
+    console.log(items)
     svg.remove();    
     items.forEach(item => {
         if (item.className == "SymbolItem") {
@@ -77,8 +78,8 @@ function importSVGCB(svgString) {
         }
     })
 
-    getItemsByName(project, "Path", "track", false).forEach(item => item.guide = true)
-    getItemsByName(project, "Path", "playhead", false).forEach(item => item.guide = true)
+    //getItemsByName(project, "Path", "track", false).forEach(item => item.guide = true)
+    //getItemsByName(project, "Path", "playhead", false).forEach(item => item.guide = true)
 }
 
 function exportSVG() {
@@ -95,6 +96,19 @@ function exportSVG() {
     return proj
 }
 
+function exportSelectedSVG() {
+    let rect = new Path.Rectangle({
+        from: [0, 0],
+        to: [2560, 1280],
+        insert: false
+    })
+    let group = new Group([rect, ...project.selectedItems], { insert: false })
+    let proj = group.exportSVG({ asString: true })
+    rect.remove()
+    return proj
+}
+
+
 
 function createTouchPath(frame) {
     return new Path({
@@ -110,7 +124,10 @@ function createTouchPath(frame) {
 
 const createPlayGroup = (x, y, width, height) => {
     let playgroup = new Group({
-        name: "playgroup"
+        name: "playgroup",
+        data: {
+            playing: false
+        }
     })
     let playhead = new Path({
         //guide: true,
@@ -136,7 +153,7 @@ const createPlayGroup = (x, y, width, height) => {
 const createNotePath = function (e, selected) {
     return new Path({
         applyMatrix: false,
-        strokeWidth: DS.yPixelScale / 2,
+        strokeWidth: DS.pxPerSemitone / 2,
         strokeColor: {
             gradient: {
                 stops: [[project.currentStyle.strokeColor, 0], [project.currentStyle.strokeColor, 0]]
@@ -145,7 +162,7 @@ const createNotePath = function (e, selected) {
         // disable for now as the bug persists https://github.com/LLK/paper.js/pull/40/files
         //strokeScaling: false,
         selected,
-        segments: [softRoundPointY(e.point, DS.yPixelScale)],
+        segments: [softRoundPointY(e.point, DS.pxPerSemitone)],
         data: { pointerIds: [] }
     })
 }
@@ -172,8 +189,10 @@ function paramsFromColor(col){
 
 function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDuration) {
     let intersections = item.getIntersections(touchPath)
-    let ampScale = item.strokeWidth / DS.yPixelScale;
+    let ampScale = clamp(item.strokeWidth, 2, 20) / DS.pxPerSemitone;
     let col = new Color(0, 0, 1, 1)
+
+    intersectionCount = clamp(intersectionCount,0,20)
 
     if (item.strokeColor) {
         if (item.strokeColor.gradient) {
@@ -182,12 +201,20 @@ function intersectItem(touchPath, item, intersectionCount, pressure, osc, rampDu
         }
         else col = item.strokeColor
     }
+
     const {midpoint, curvature, noise, resonance} = paramsFromColor(col)
 
     let yCoord = item.localToGlobal(intersections[0].point).y 
     let pan = ((DS.activeIDs.indexOf(item.id)) / DS.activeIDs.length) - 0.5;
-    const amp = clamp(ampScale * col.alpha / (intersectionCount / 2), 0, 0.5)
-    let frequency = noteToFrequency(yCoord / DS.yPixelScale + DS.noteOffset);
+    const amp = clamp(ampScale * col.alpha / (intersectionCount / 3), 0, 0.8)
+    let frequency = noteToFrequency(yCoord / DS.pxPerSemitone + DS.noteOffset);
+
+    if(item.opacity<1){
+        item.opacity = 1
+        rampDuration = 0.005
+    }
+    else rampDuration = 0.05
+
     setOscillatorParams({
         osc, context: audioCtx, amp, pan, frequency, midpoint, curvature, noise, rampDuration,
         resonance
@@ -221,6 +248,6 @@ function updateUndo(){
 
 export {
     getItemsByName, getTimeForProjectedPoint, getTouchTiltXY, exportProject, importProject,
-    importSVG, importSVGCB, exportSVG, createTouchPath,
+    importSVG, importSVGCB, exportSelectedSVG, exportSVG, createTouchPath,
     createNotePath, createPlayhead, intersectItem, createPlayGroup, getCanvasItems, updateUndo
 }

@@ -9,7 +9,7 @@ import { elementById, createTools } from './modules/domUtils.js';
 import DimTool from './modules/DimTool.js';
 import { setActiveTool } from './modules/tools.js';
 import { initGUI } from './modules/gui.js';
-import { importSVGCB, intersectItem, getItemsByName, createPlayGroup, getCanvasItems, updateUndo } from './modules/paperUtils.js';
+import { exportSelectedSVG, importSVGCB, intersectItem, getItemsByName, createPlayGroup, getCanvasItems, updateUndo } from './modules/paperUtils.js';
 
 const OSC_FADE_TIME = 0.02
 
@@ -30,13 +30,16 @@ startworklet.onclick = function(e){
 
 view.scale(1,-1)
 
-view.translate(0,-240)
+//view.translate(0,-240)
 
 initGUI()
 
 window.ds = DS
 
-ds.playgroup = createPlayGroup(0,view.bounds.top,view.viewSize.width,view.viewSize.height)
+ds.playgroup = createPlayGroup(0,view.bounds.top,2560,1280)
+
+
+// let pg1 = createPlayGroup(0,view.bounds.bottom - view.viewSize.height/4,view.viewSize.width/4,view.viewSize.height/4)
 
 updateUndo()
 
@@ -60,7 +63,7 @@ function adjustPlaygroup(playgroup, playPosition){
     let tracks = getItemsByName(playgroup, "Path", "track", false)
     let playheads = getItemsByName(playgroup, "Path", "playhead", false)
 
-    let t = playPosition / 60
+    let t = playPosition / 60 * ds.PPQ
     
     if(tracks.length && playheads.length){
         let playhead = playheads[0]
@@ -69,25 +72,28 @@ function adjustPlaygroup(playgroup, playPosition){
                 let tlen = tracks[0].length
                 let tlen1 = tracks[0].firstCurve.length
                 let tlen2 = tracks[0].lastCurve.length
-                let t1 = (t*300) % tlen1
-                let t2 = (t*300) % (tracks[0].lastCurve.previous.length)
+                let t1 = t % tlen1
+                let t2 = t % (tracks[0].lastCurve.previous.length)
                 playhead.segments[0].point = tracks[0].getPointAt(tracks[0].getLocationAt(t1))
                 playhead.segments[1].point = tracks[0].getPointAt(tracks[0].getLocationAt(tlen - tlen2 - t2))                         
             }
             else {
-                let tVal = (t*300) % tracks[0].length
+                let tVal = t % tracks[0].length
                 playhead.position = tracks[0].getPointAt(tVal)
             }
         }
         else if (tracks.length == 2){
-            let t1 = (t*300) % tracks[0].length
-            let t2 = (t*300) % tracks[1].length
+            let t1 = t % tracks[0].length
+            let t2 = t % tracks[1].length
             playhead.segments[0].point = tracks[0].getPointAt(t1)
             playhead.segments[1].point = tracks[1].getPointAt(t2)
         }
     }
 }
 
+/*
+((context.currentTime - toolDraw.startTime) * (BPM / 60) * PPQ) % seqLength;
+*/
 
 view.autoUpdate = true
 view.onFrame = function (e) {
@@ -106,24 +112,27 @@ view.onFrame = function (e) {
 
     items.forEach(item => {
         let playhead = playheads.filter(playhead => item.intersects(playhead))[0]
-        if(playhead && playhead.opacity == 1){
-            if(DS.activeIDs.indexOf(item.id) == -1)
-                DS.activeIDs.push(item.id)
-            
-            // find next available oscillator or the use existing with same id
-            let oscObject = oscArray.filter(oscillator => oscillator.id == null)
-            let existingOscy = oscArray.filter(oscillator => oscillator.id == item.id)
+        if(playhead){
+            if(playhead.opacity == 1){
+                if(DS.activeIDs.indexOf(item.id) == -1)
+                    DS.activeIDs.push(item.id)
+                    
+                // find next available oscillator or the use existing with same id
+                let oscObject = oscArray.filter(oscillator => oscillator.id == null)
+                let existingOscy = oscArray.filter(oscillator => oscillator.id == item.id)
 
-            if(oscObject.length && !existingOscy.length){
-                oscObject[0].id = item.id
-                intersectItem(playhead, item, DS.activeIDs.length, 1, oscObject[0], OSC_FADE_TIME)
-            }
-            else if(existingOscy.length){
-                intersectItem(playhead, item, DS.activeIDs.length, 1, existingOscy[0], OSC_FADE_TIME)           
+                if(oscObject.length && !existingOscy.length){
+                    oscObject[0].id = item.id
+                    intersectItem(playhead, item, DS.activeIDs.length, 1, oscObject[0], OSC_FADE_TIME)
+                }
+                else if(existingOscy.length){
+                    intersectItem(playhead, item, DS.activeIDs.length, 1, existingOscy[0], OSC_FADE_TIME)           
+                }
             }
         }
         else {
             DS.activeIDs = DS.activeIDs.filter(id => id != item.id)
+            item.opacity = 0.5
             let _osc = oscArray.filter(oscillator => oscillator.id == item.id)
             if(_osc.length){
                 _osc[0].id = null
@@ -147,18 +156,26 @@ const getElementOffset = elem => {
 }
 
 let mainTool = new DimTool({
-    eventTypes: ['keydown', 'keyup', 
+    eventTypes: ['wheel','keydown', 'keyup', 
     'pointerdown','pointerup','pointercancel',
     'gesturestart','gesturechange','gestureend','wheel',
     'touchstart','copy','paste'],
     eventHandler: {
         copy(e){
             e.event.preventDefault()
-            console.log(exportSVG())
+            let projectSVGString = exportSelectedSVG()
+            navigator.clipboard.writeText(projectSVGString).then(function() {
+                console.log('wrote selected items to clipboard')
+              }, function() {
+                console.log('clipboard set failed')
+            });
         },
         paste(e){
             //e.preventDefault()
-            importSVGCB(e.event.clipboardData.getData('text/plain'))        
+            let clipboardText = e.event.clipboardData.getData('text/plain')
+            if(clipboardText.includes('svg')){
+                importSVGCB(e.event.clipboardData.getData('text/plain'))   
+            }     
         },
         pointerdown(e){
         },
@@ -182,6 +199,10 @@ let mainTool = new DimTool({
                 console.log('current '+toolStack.currentTool)
                 console.log('previous '+toolStack.previousTool)
                 setActiveTool(toolStack, "selection")
+            }
+            if(!isNaN(parseInt(e.event.key))){
+                ds.playPosition = (parseInt(e.event.key) - 1) * 40
+                adjustPlaygroup(ds.playgroup, ds.playPosition)
             }
         },
         keyup(e){
@@ -210,6 +231,9 @@ let mainTool = new DimTool({
             // TODO handle the native pointer event and additional props somehow (native paper points for each event)
             e.event.preventDefault();
             e.event.stopPropagation();
+
+            ds.playPosition += e.event.deltaX / 5
+            adjustPlaygroup(ds.playgroup, ds.playPosition)
         }
     },
     targetElement: window
@@ -218,7 +242,7 @@ let mainTool = new DimTool({
 mainTool.activate()
 
 
-//elementById.triangle.checked = true
+elementById.triangle.checked = true
 project.currentStyle.strokeColor = "#0000FF"
 
 var ws = new WebSocket("wss://" + location.host);

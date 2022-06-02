@@ -68,7 +68,7 @@ export default class DimTool {
         // TODO: Handle this better
 
         if(this.eventHandler[e.type] != null){
-            let hit = project.hitTest(view.viewToProject(point), {tolerance: 16 / view.zoom, fill: false, stroke: true, segments: true, guides: false})
+            let hit = project.hitTest(view.viewToProject(point), {tolerance: 10 / view.zoom, fill: false, stroke: true, segments: true, guides: false})
             this.eventHandler[e.type].call(this, { point:view.viewToProject(point), hit, event: e })
         }
 

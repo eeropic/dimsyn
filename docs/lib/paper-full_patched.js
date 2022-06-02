@@ -15373,7 +15373,9 @@
                         matrix.rotate(v[0], v[1] || 0, v[2] || 0);
                         break;
                     case 'translate':
-                        matrix.translate(v[0], v[1] || 0);
+                        //
+                        //console.log(v[0], v[1])
+                        //matrix.translate(v[0], v[1] || 0);
                         break;
                     case 'scale':
                         matrix.scale(v);

@@ -5,7 +5,6 @@ import { clamp, softRoundPointY } from './mathUtils.js';
 import { getElementOffset } from './domUtils.js';
 
 const drawingTools = {
- /*
     playhead: {
         eventHandler: {
             pointerdown(e) {
@@ -120,7 +119,6 @@ const drawingTools = {
         },
         description: "Select tool"
     },
-    */
     pencil: {
         eventTypes: ['gesturechange','pointerdown','pointermove','pointerup'],
         eventHandler: {
@@ -164,6 +162,7 @@ const drawingTools = {
                     }
                 }
                 else {
+                    console.log(e.point)
                     this.path = createNotePath(e,false)
                 }
             },
@@ -195,10 +194,10 @@ const drawingTools = {
                         let valY = Math.abs(tiltY / 90)
                         
                         if(e.event.pointerType == "mouse"){
-                            this.path.addGradientPoint(softRoundPointY(e.point,DS.yPixelScale), project.currentStyle.strokeColor)
+                            this.path.addGradientPoint(softRoundPointY(e.point,DS.pxPerSemitone), project.currentStyle.strokeColor)
                         }
                         else {
-                            this.path.addGradientPoint(softRoundPointY(e.point,DS.yPixelScale), new Color(valY,valX,1-valY,valZ))
+                            this.path.addGradientPoint(softRoundPointY(e.point,DS.pxPerSemitone), new Color(valY,valX,1-valY,valZ))
                         }
                         
                     }
@@ -221,7 +220,11 @@ const drawingTools = {
                 else {
                     if(this.path && !e.event.metaKey){
                         this.path.simplify()
-                        //this.path.simplifyGradient()
+                        
+                        if(this.path.length < 1)
+                            this.path.remove()
+                        else 
+                            this.path.simplifyGradient()
                     }
                 }
                 updateUndo()
@@ -229,7 +232,7 @@ const drawingTools = {
         },
         description: "Draw freehand"
     },
-    /*
+
     drawline: {
         eventTypes: ['keydown','pointerdown','pointermove','pointerup'],
         eventHandler: {
@@ -270,9 +273,7 @@ const drawingTools = {
         },
         description: "Draw line"
     },
-    */
 
-    /*
     spray: {
         eventHandler: {
             pointerdown(e) {
@@ -294,7 +295,6 @@ const drawingTools = {
         description: "Spray (recolor)"
     },
 
-    */
     /* TODO: ERASER TOOL
     eraser: {
         eventHandler: {
@@ -312,7 +312,7 @@ const drawingTools = {
     },
     */
 
-    /*
+
     zoompan: {
         eventTypes: ['wheel', 
         'gesturestart','gesturechange','gestureend'],
@@ -372,7 +372,6 @@ const drawingTools = {
         },
         targetElement: window        
     }
-    */
 }
 
 const modifierTools = {
