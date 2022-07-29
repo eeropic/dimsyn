@@ -63,7 +63,7 @@ function adjustPlaygroup(playgroup, playPosition){
     let tracks = getItemsByName(playgroup, "Path", "track", false)
     let playheads = getItemsByName(playgroup, "Path", "playhead", false)
 
-    let t = playPosition / 60 * ds.PPQ
+    let t = playPosition / 60 * ds.PPQ * 5
     
     if(tracks.length && playheads.length){
         let playhead = playheads[0]

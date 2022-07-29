@@ -64,7 +64,7 @@ function createTools() {
                     id,
                     title: value.description,
                     checked: id == defaultTool ? true : false,
-                    style: `--icon-${id}: url('/assets/dimsyn_icons_all.svg#${id}');`
+                    style: `--icon-${id}: url('assets/dimsyn_icons_all.svg#${id}');`
                 })
                 toolGroupContainer.appendChild(toolElement)
 
