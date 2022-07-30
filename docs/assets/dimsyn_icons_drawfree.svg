@@ -1,0 +1,9 @@
+<svg id="icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <symbol id="_drawfree" data-name="_drawfree" viewBox="0 0 40 40">
+      <rect id="bounds" width="40" height="40" fill="none"/>
+      <path d="M5,15l8.75-8.75a5.3,5.3,0,0,1,7.5,0h0a5.3,5.3,0,0,1,0,7.5L8.75,26.25a5.3,5.3,0,0,0,0,7.5h0a5.3,5.3,0,0,0,7.5,0l6.926-6.926a5.3,5.3,0,0,1,7.993.568L35,32.5" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    </symbol>
+  </defs>
+  <use width="40" height="40" xlink:href="#_drawfree"/>
+</svg>

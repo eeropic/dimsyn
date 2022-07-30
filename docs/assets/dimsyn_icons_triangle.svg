@@ -1,0 +1,9 @@
+<svg id="icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <symbol id="_triangle" data-name="_triangle" viewBox="0 0 40 40">
+      <rect id="bounds" width="40" height="40" fill="none"/>
+      <polyline points="10 20 15 10 25 30 30 20" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    </symbol>
+  </defs>
+  <use width="40" height="40" xlink:href="#_triangle"/>
+</svg>

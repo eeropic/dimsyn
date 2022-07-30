@@ -1,0 +1,15 @@
+<svg id="icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <symbol id="_spray" data-name="_spray" viewBox="0 0 40 40">
+      <rect id="bounds" width="40" height="40" fill="none"/>
+      <rect x="5" y="15" width="12.5" height="20" rx="2" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <line x1="20" y1="10" x2="35" y2="5" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <line x1="20" y1="10" x2="35" y2="10" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <line x1="20" y1="10" x2="35" y2="15" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <line x1="20" y1="10" x2="35" y2="20" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <line x1="20" y1="10" x2="35" y2="25" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <polygon points="7.5 15 7.5 10 15 7.5 15 15 7.5 15" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    </symbol>
+  </defs>
+  <use width="40" height="40" xlink:href="#_spray"/>
+</svg>

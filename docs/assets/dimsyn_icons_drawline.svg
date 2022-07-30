@@ -1,0 +1,9 @@
+<svg id="icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <symbol id="_drawline" data-name="_drawline" viewBox="0 0 40 40">
+      <rect id="bounds" width="40" height="40" fill="none"/>
+      <line x1="5" y1="35" x2="35" y2="5" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    </symbol>
+  </defs>
+  <use width="40" height="40" xlink:href="#_drawline"/>
+</svg>

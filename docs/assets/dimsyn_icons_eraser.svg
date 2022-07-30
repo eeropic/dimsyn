@@ -1,0 +1,11 @@
+<svg id="icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <symbol id="_eraser" data-name="_eraser" viewBox="0 0 40 40">
+      <rect id="bounds" width="40" height="40" fill="none"/>
+      <line x1="17.5" y1="35" x2="35" y2="35" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <polygon points="35 17.5 25 7.5 5 27.5 12.5 35 17.5 35 35 17.5" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <line x1="12.5" y1="20" x2="22.5" y2="30" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    </symbol>
+  </defs>
+  <use width="40" height="40" xlink:href="#_eraser"/>
+</svg>

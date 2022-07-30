@@ -1,0 +1,9 @@
+<svg id="icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <symbol id="_marquee" data-name="_marquee" viewBox="0 0 40 40">
+      <rect id="bounds" width="40" height="40" fill="none"/>
+      <rect x="5" y="5" width="30" height="30" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" stroke-dasharray="0 6"/>
+    </symbol>
+  </defs>
+  <use width="40" height="40" xlink:href="#_marquee"/>
+</svg>
