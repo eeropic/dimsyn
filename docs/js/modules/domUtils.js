@@ -57,7 +57,7 @@ function createTools() {
 
         Object.entries(toolgroup.definitions).forEach(
             ([id, value]) => {
-                document.styleSheets[0].insertRule(`.ds-${id}:before { background-image: url('./assets/dimsyn_icons_${id}.svg'); }`);
+                document.styleSheets[0].insertRule(`.ds-${id}:before { background-image: url('../assets/dimsyn_icons_${id}.svg'); }`);
                 let toolElement = createToolButtonElement({
                     type: toolgroup.type,
                     name: toolgroup.id,
