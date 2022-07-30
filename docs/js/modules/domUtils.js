@@ -57,14 +57,13 @@ function createTools() {
 
         Object.entries(toolgroup.definitions).forEach(
             ([id, value]) => {
-                document.styleSheets[0].insertRule(`.ds-${id}:before { background-image: var(--icon-${id}); }`);
+                document.styleSheets[0].insertRule(`.ds-${id}:before { background-image: url('./assets/dimsyn_icons_${id}.svg'); }`);
                 let toolElement = createToolButtonElement({
                     type: toolgroup.type,
                     name: toolgroup.id,
                     id,
                     title: value.description,
-                    checked: id == defaultTool ? true : false,
-                    style: `--icon-${id}: url('/assets/dimsyn_icons_${id}.svg');`
+                    checked: id == defaultTool ? true : false
                 })
                 toolGroupContainer.appendChild(toolElement)
 
