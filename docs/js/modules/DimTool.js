@@ -1,5 +1,4 @@
 export default class DimTool {
-    eventTypes = ['pointerdown', 'pointermove', 'pointerup']
     touches = []
     numTouches = 0
     constructor(
@@ -25,7 +24,8 @@ export default class DimTool {
     }
 
     activate() {
-        this.eventTypes.forEach(eventType =>
+        let eventTypes = Object.keys(this.eventHandler)
+        eventTypes.forEach(eventType =>
             this.targetElement.addEventListener(eventType, this, { passive: false })
         )
         if(this.toolElement != null)
@@ -33,7 +33,8 @@ export default class DimTool {
     }
 
     deactivate() {
-        this.eventTypes.forEach(eventType =>
+        let eventTypes = Object.keys(this.eventHandler)
+        eventTypes.forEach(eventType =>
             this.targetElement.removeEventListener(eventType, this)
         )
     }

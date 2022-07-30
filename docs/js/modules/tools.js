@@ -120,7 +120,6 @@ const drawingTools = {
         description: "Select tool"
     },
     pencil: {
-        eventTypes: ['gesturechange','pointerdown','pointermove','pointerup'],
         eventHandler: {
             gesturechange(e){
                 project.selectedItems.forEach(item => {
@@ -234,7 +233,6 @@ const drawingTools = {
     },
 
     drawline: {
-        eventTypes: ['keydown','pointerdown','pointermove','pointerup'],
         eventHandler: {
             keydown(e){
                 if(e.event.key == "Escape"){
@@ -314,8 +312,6 @@ const drawingTools = {
 
 
     zoompan: {
-        eventTypes: ['wheel', 
-        'gesturestart','gesturechange','gestureend'],
         eventHandler: {
             gesturestart(e){
                 e.event.preventDefault()            

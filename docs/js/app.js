@@ -156,10 +156,6 @@ const getElementOffset = elem => {
 }
 
 let mainTool = new DimTool({
-    eventTypes: ['wheel','keydown', 'keyup', 
-    'pointerdown','pointerup','pointercancel',
-    'gesturestart','gesturechange','gestureend','wheel',
-    'touchstart','copy','paste'],
     eventHandler: {
         copy(e){
             e.event.preventDefault()
@@ -200,6 +196,9 @@ let mainTool = new DimTool({
                 console.log('previous '+toolStack.previousTool)
                 setActiveTool(toolStack, "selection")
             }
+            if(e.event.code == "Space"){
+                setActiveTool(toolStack, "zoompan")
+            }
             if(!isNaN(parseInt(e.event.key))){
                 ds.playPosition = (parseInt(e.event.key) - 1) * 40
                 adjustPlaygroup(ds.playgroup, ds.playPosition)
@@ -207,12 +206,13 @@ let mainTool = new DimTool({
         },
         keyup(e){
             console.log(e)
-            if(e.event.key == "Meta"){
+            if(e.event.key == "Meta" || e.event.code == "Space"){
                 console.log('current '+toolStack.currentTool)
                 console.log('previous '+toolStack.previousTool)                
                 setActiveTool(toolStack, toolStack.previousTool)
             }
-            if(e.event.code == "Space"){
+            
+            if(e.event.code == "Enter"){
                 ds.playing = !ds.playing
                 elementById.play.checked = ds.playing
                 let playheads = getItemsByName(project, "Path", "playhead", false)
