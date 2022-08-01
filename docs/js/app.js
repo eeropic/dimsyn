@@ -174,6 +174,7 @@ let mainTool = new DimTool({
             }     
         },
         pointerdown(e){
+            
         },
         pointermove(e){
 
@@ -197,7 +198,10 @@ let mainTool = new DimTool({
                 setActiveTool(toolStack, "selection")
             }
             if(e.event.code == "Space"){
-                setActiveTool(toolStack, "zoompan")
+                if(!e.event.repeat){
+                    setActiveTool(toolStack, "zoompan")
+                    canvas.classList.add("grab")
+                }
             }
             if(!isNaN(parseInt(e.event.key))){
                 ds.playPosition = (parseInt(e.event.key) - 1) * 40
@@ -210,6 +214,7 @@ let mainTool = new DimTool({
                 console.log('current '+toolStack.currentTool)
                 console.log('previous '+toolStack.previousTool)                
                 setActiveTool(toolStack, toolStack.previousTool)
+                canvas.classList.remove("grab")
             }
             
             if(e.event.code == "Enter"){

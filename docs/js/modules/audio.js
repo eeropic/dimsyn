@@ -1,4 +1,4 @@
-const MAX_POLYPHONY = 15
+import { DS } from './init.js';
 
 function initAudioContext() {
     var AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -6,7 +6,7 @@ function initAudioContext() {
     var oscArray = []
 
     audioCtx.audioWorklet.addModule('js/oscillator-processor.js').then(() => {
-        for (let i = 0; i < MAX_POLYPHONY; i++) {
+        for (let i = 0; i < DS.MAX_POLYPHONY; i++) {
             let osc = new AudioWorkletNode(audioCtx, 'oscillator-processor', { outputChannelCount: [2] });
             osc.connect(audioCtx.destination)
             oscArray.push({

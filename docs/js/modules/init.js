@@ -11,6 +11,7 @@ var DS = {
     },
     noteOffset: 0,
     MAX_UNDOS: 10,
+    MAX_POLYPHONY: 15,
     playing: false,
     playPosition: 0,
     previousProjectState: null,

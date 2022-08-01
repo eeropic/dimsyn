@@ -1,5 +1,8 @@
 export default class DimTool {
     touches = []
+    downPoint = null
+    lastPoint = null
+    point = null
     numTouches = 0
     constructor(
         toolConfig = {
@@ -40,11 +43,16 @@ export default class DimTool {
     }
 
     handleEvent(e) {
+        this.lastPoint = this.point
         let point = new Point(e.clientX, e.clientY)
+        this.point = point
 
         if (e.type == 'pointerdown' && !this.hasActivePointer(e.pointerId) && e.pointerType == "touch"){
             this.touches.push({ id: e.pointerId, point })
         }
+
+        if (e.type == 'pointerdown' && e.pointerType != "touch")
+            this.downPoint = this.point
         
         if (e.type == 'pointermove'){
             let currentPointer = this.touches.filter(touch => touch.id == e.pointerId)
@@ -53,24 +61,22 @@ export default class DimTool {
             }            
         }
 
-        if (e.type == 'touchstart'){
-            /*
-            for(let j = 0; j < this.touches.length; j++){
-                let id = this.touches[j].id
-                if([...e.touches].filter(touch => touch.identifier == id).length == 0){
-                    this.updatePointers(id)
-                }
-            }
-            */
-        }
-        
-        
-        // call the pointer event handler
-        // TODO: Handle this better
-
+        // call the pointer event handler // TODO: Handle this better
         if(this.eventHandler[e.type] != null){
-            let hit = project.hitTest(view.viewToProject(point), {tolerance: 10 / view.zoom, fill: false, stroke: true, segments: true, guides: false})
-            this.eventHandler[e.type].call(this, { point:view.viewToProject(point), hit, event: e })
+            let hit = project.hitTest(view.viewToProject(point), {
+                tolerance: 10 / view.zoom, 
+                fill: false, 
+                stroke: true, 
+                segments: true, 
+                guides: false
+            })
+            this.eventHandler[e.type].call(this, { 
+                downPoint: this.downPoint, 
+                lastPoint: this.lastPoint, 
+                point:view.viewToProject(point), 
+                hit, 
+                event: e
+            })
         }
 
         if (e.type == 'pointerup' || e.type == 'pointercancel')

@@ -236,7 +236,6 @@ const drawingTools = {
         eventHandler: {
             keydown(e){
                 if(e.event.key == "Escape"){
-                    console.log('vittu')
                     project.deselectAll()
                     this.path.selected = false
                     this.path = null
@@ -251,9 +250,6 @@ const drawingTools = {
                     this.path = createNotePath(e, true)
                     this.path.add(e.point)
                 }
-                //this.path.add(e.point)
-                //this.path.strokeColor = "red"
-                //this.path.strokeWidth = 4
             },
             pointermove(e) {
                 if(this.path){
@@ -310,9 +306,24 @@ const drawingTools = {
     },
     */
 
-
     zoompan: {
         eventHandler: {
+            pointerdown(e){
+                this.downPoint = e.point
+                this.currPoint = e.point
+                this.prevPoint = e.point
+                this.viewCenter = new Point(view.center.x, view.center.y)
+            },
+            pointermove(e){
+                if(e.event.buttons){
+                    view.center = this.viewCenter
+                    this.prevPoint = this.currPoint
+                    this.currPoint = new Point(e.event.clientX, e.event.clientY)
+                    let delta = this.currPoint.subtract(this.prevPoint)
+                    this.viewCenter.x -= delta.x / view.getZoom()
+                    this.viewCenter.y -= -delta.y / view.getZoom()
+                }
+            },
             gesturestart(e){
                 e.event.preventDefault()            
                 this.viewScaling = new Point(view.scaling.x, view.scaling.y)
