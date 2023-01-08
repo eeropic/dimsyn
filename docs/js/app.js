@@ -18,7 +18,7 @@ const { canvas, gui, startbuttons, startworklet } = elementById
 var [audioCtx, oscArray] = initAudioContext();
 var toolStack = createTools(DS)
 
-setActiveTool(toolStack, "pencil")
+setActiveTool(toolStack, "drawline")
 
 if(audioCtx.state != "running")
     startbuttons.classList.toggle("hidden")
@@ -248,6 +248,9 @@ mainTool.activate()
 
 
 elementById.triangle.checked = true
+elementById.snaptime.checked = ds.snapToGridX
+elementById.snappitch.checked = ds.snapToSemiY
+
 project.currentStyle.strokeColor = "#0000FF"
 
 var ws = new WebSocket("wss://" + location.host);

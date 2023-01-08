@@ -2,8 +2,6 @@ import { DS } from './init.js';
 import { clamp, softRoundPointY, projectPointToLine } from './mathUtils.js';
 import { noteToFrequency, setOscillatorParams } from './audio.js';
 
-
-
 function getItemsByName(parent, className, nameIncludes, guide){
     return parent.getItems({guide, className, match(item){
         if(item && item.name != null)
@@ -150,7 +148,7 @@ const createPlayGroup = (x, y, width, height) => {
     return playgroup
 }
 
-const createNotePath = function (e, selected) {
+const createNotePath = function (e, selected, point) {
     return new Path({
         applyMatrix: false,
         strokeWidth: DS.pxPerSemitone / 2,
@@ -162,7 +160,7 @@ const createNotePath = function (e, selected) {
         // disable for now as the bug persists https://github.com/LLK/paper.js/pull/40/files
         //strokeScaling: false,
         selected,
-        segments: [softRoundPointY(e.point, DS.pxPerSemitone)],
+        segments: [point],
         data: { pointerIds: [] }
     })
 }

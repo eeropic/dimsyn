@@ -5,6 +5,7 @@ class OscillatorProcessor extends AudioWorkletProcessor {
         else if (x > 3) return 1;
         else return x * (27 + x * x) / (27 + 9 * x * x);
     }
+    
     clamp = (x, min, max) => Math.max(min, Math.min(x, max))
 
     // Exponential blend function from https://math.stackexchange.com/a/1754900

@@ -7,7 +7,7 @@ const transportCommands = {
     play: {
         eventHandler:{
             change(){
-                ds.playing = !ds.playing
+                ds.playing = this.firstElementChild.checked
                 let playheads = getItemsByName(project, "Path", "playhead", false)
                 playheads.forEach(item => {
                     if(ds.playing)
@@ -18,6 +18,31 @@ const transportCommands = {
         },
         description: "Start/Stop playback"
     }
+}
+
+const editCommands = {
+    snaptime: {
+        eventHandler:{
+            change(){
+                ds.snapToGridX = this.firstElementChild.checked
+                /*
+                ds.playing = !ds.playing
+                */
+            }
+        },
+        description: "Snap X to 1/16th grid"
+    },
+    snappitch: {
+        eventHandler:{
+            change(){
+                ds.snapToSemiY = this.firstElementChild.checked
+                /*
+                ds.playing = !ds.playing
+                */
+            }
+        },
+        description: "Snap Y to semitone grid"
+    }    
 }
 
 const projectCommands = {
@@ -141,6 +166,11 @@ var commands = [
         id: "transportcommands",
         type: "checkbox",
         definitions: transportCommands
+    },
+    {
+        id: "editcommands",
+        type: "checkbox",
+        definitions: editCommands
     },
     {
         id: "projectcommands",

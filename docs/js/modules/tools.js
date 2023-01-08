@@ -1,7 +1,7 @@
 import { DS } from './init.js';
 import { debugDot, debugLine, debugText } from './debugUtils.js';
 import { createNotePath, createPlayhead, getCanvasItems, updateUndo } from './paperUtils.js';
-import { clamp, softRoundPointY } from './mathUtils.js';
+import { clamp, roundCoord, roundPointX, roundPointY, softRoundPointY } from './mathUtils.js';
 import { getElementOffset } from './domUtils.js';
 
 const drawingTools = {
@@ -43,10 +43,20 @@ const drawingTools = {
         eventHandler: {
             pointerdown(e) {
                 if(e.hit && e.hit.item){
+                    if(e.event.pointerType == "mouse" && !e.event.shiftKey)
+                        project.deselectAll()
                     if(e.hit.type === "segment")
                         e.hit.segment.selected = true
                     else if(e.hit.type === "stroke")
                         e.hit.item.selected = true
+
+                    if(e.event.altKey){
+                        let clonedItems = []
+                        project.selectedItems.forEach(item => {
+                            clonedItems.push(item.clone())
+                            item.selected = false
+                        })
+                    }
                     
                     project.selectedItems.forEach(item => {
                         item.setDragPivot(e.point)
@@ -71,25 +81,26 @@ const drawingTools = {
                 }
             },
             pointermove(e) {
-                if(this.previousPoint == null)
-                    this.previousPoint = e.point
-                if(this.currentPoint == null)
-                    this.currentPoint = e.point
-                
-                this.previousPoint = this.currentPoint
-                this.currentPoint = e.point
-                this.deltaPoint = this.currentPoint.subtract(this.previousPoint)
+                this.deltaPoint = e.point.subtract(e.lastPoint)
+
+                let point = new Point(
+                    ds.snapToGridX ? roundCoord(e.point.x, ds.PPQ / 4) : e.point.x,
+                    ds.snapToSemiY ? roundCoord(e.point.y, ds.pxPerSemitone) : e.point.y
+                )
 
                 if(e.event.buttons){
                     project.selectedItems.forEach(item => {
                         if(e.event.pointerId == item.data.pointerId){
                             let selectedSegments = item.segments.filter(seg => seg.selected)
                             if(selectedSegments.length == 0){
-                                item.position = e.point
+                                item.position = point
                             }
                             else {
                                 selectedSegments.forEach(seg => {
-                                    seg.point = seg.point.add(this.deltaPoint)
+                                    //seg.point = seg.point.add(this.deltaPoint)
+                                    seg.point.x = !ds.snapToGridX ? seg.point.x + this.deltaPoint.x : roundCoord(seg.point.x, ds.PPQ / 4) + this.deltaPoint.x;
+                                    seg.point.y = !ds.snapToSemiY ? seg.point.y + this.deltaPoint.y : roundCoord(seg.point.y, ds.pxPerSemitone) + this.deltaPoint.y;
+                                    
                                 })
                             }
                         }
@@ -115,6 +126,21 @@ const drawingTools = {
                     this.marqueePath.remove()
                     this.marqueePath = null
                 }
+                else {
+                    project.selectedItems.forEach(item => {
+                        //let selectedSegments = item.segments.filter(seg => seg.selected)
+                        //if(selectedSegments.length){
+                        item.segments.forEach(seg => {
+                            if(ds.snapToGridX)
+                                seg.point.x = roundCoord(seg.point.x, ds.PPQ / 4)
+                            if(ds.snapToSemiY)
+                                seg.point.y = roundCoord(seg.point.y, ds.pxPerSemitone)
+                        })
+                        //}
+                    })
+                   
+                }
+                updateUndo()
             }
         },
         description: "Select tool"
@@ -162,7 +188,7 @@ const drawingTools = {
                 }
                 else {
                     console.log(e.point)
-                    this.path = createNotePath(e,false)
+                    this.path = createNotePath(e,false,softRoundPointY(e.point, DS.pxPerSemitone))
                 }
             },
             pointermove(e) {
@@ -187,7 +213,8 @@ const drawingTools = {
                     if(e.event.buttons && this.path){
                         let tiltX = e.event.tiltX || 0
                         let tiltY = e.event.tiltY || 0
-                        let valZ = e.event.pressure || drawTool.webkitForce % 1;
+                        let valZ = e.event.pressure || e.event.webkitForce % 1;
+                        console.log(e.event)
                         //if(valZ == 0.5)valZ = e.delta.length / 10
                         let valX = Math.abs(tiltX / 90)
                         let valY = Math.abs(tiltY / 90)
@@ -242,18 +269,26 @@ const drawingTools = {
                 }
             },
             pointerdown(e) {
+                let point = new Point(
+                    ds.snapToGridX ? roundCoord(e.point.x, ds.PPQ / 4) : e.point.x,
+                    ds.snapToSemiY ? roundCoord(e.point.y, ds.pxPerSemitone) : e.point.y
+                )
                 this.downPoint = e.point
                 if(this.path){
-                    this.path.add(e.point)
+                    this.path.add(point)
                 }
                 else {
-                    this.path = createNotePath(e, true)
-                    this.path.add(e.point)
+                    this.path = createNotePath(e, true, point)
+                    this.path.add(point)
                 }
             },
             pointermove(e) {
+                let point = new Point(
+                    ds.snapToGridX ? roundCoord(e.point.x, ds.PPQ / 4) : e.point.x,
+                    ds.snapToSemiY ? roundCoord(e.point.y, ds.pxPerSemitone) : e.point.y
+                )                
                 if(this.path){
-                    this.path.lastSegment.point = e.point
+                    this.path.lastSegment.point = point
                 }
             },
             pointerup(e) {
@@ -309,19 +344,13 @@ const drawingTools = {
     zoompan: {
         eventHandler: {
             pointerdown(e){
-                this.downPoint = e.point
-                this.currPoint = e.point
-                this.prevPoint = e.point
                 this.viewCenter = new Point(view.center.x, view.center.y)
             },
             pointermove(e){
                 if(e.event.buttons){
                     view.center = this.viewCenter
-                    this.prevPoint = this.currPoint
-                    this.currPoint = new Point(e.event.clientX, e.event.clientY)
-                    let delta = this.currPoint.subtract(this.prevPoint)
-                    this.viewCenter.x -= delta.x / view.getZoom()
-                    this.viewCenter.y -= -delta.y / view.getZoom()
+                    this.viewCenter.x -= e.delta.x / view.getZoom()
+                    this.viewCenter.y -= -e.delta.y / view.getZoom()
                 }
             },
             gesturestart(e){

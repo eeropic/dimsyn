@@ -2,6 +2,7 @@ export default class DimTool {
     touches = []
     downPoint = null
     lastPoint = null
+    delta = null
     point = null
     numTouches = 0
     constructor(
@@ -43,12 +44,12 @@ export default class DimTool {
     }
 
     handleEvent(e) {
-        this.lastPoint = this.point
-        let point = new Point(e.clientX, e.clientY)
-        this.point = point
+        this.lastPoint = this.point || new Point(e.clientX, e.clientY)
+        this.point = new Point(e.clientX, e.clientY)
+        this.delta = this.point.subtract(this.lastPoint)
 
         if (e.type == 'pointerdown' && !this.hasActivePointer(e.pointerId) && e.pointerType == "touch"){
-            this.touches.push({ id: e.pointerId, point })
+            this.touches.push({ id: e.pointerId, point: this.point })
         }
 
         if (e.type == 'pointerdown' && e.pointerType != "touch")
@@ -57,13 +58,13 @@ export default class DimTool {
         if (e.type == 'pointermove'){
             let currentPointer = this.touches.filter(touch => touch.id == e.pointerId)
             if(currentPointer.length){
-                currentPointer[0].point = point
+                currentPointer[0].point = this.point
             }            
         }
 
         // call the pointer event handler // TODO: Handle this better
         if(this.eventHandler[e.type] != null){
-            let hit = project.hitTest(view.viewToProject(point), {
+            let hit = project.hitTest(view.viewToProject(this.point), {
                 tolerance: 10 / view.zoom, 
                 fill: false, 
                 stroke: true, 
@@ -71,9 +72,10 @@ export default class DimTool {
                 guides: false
             })
             this.eventHandler[e.type].call(this, { 
-                downPoint: this.downPoint, 
-                lastPoint: this.lastPoint, 
-                point:view.viewToProject(point), 
+                downPoint: view.viewToProject(this.downPoint), 
+                lastPoint: view.viewToProject(this.lastPoint), 
+                point: view.viewToProject(this.point), 
+                delta: this.delta,
                 hit, 
                 event: e
             })
@@ -87,3 +89,4 @@ export default class DimTool {
         }
     }
 }
+

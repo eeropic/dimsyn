@@ -11,6 +11,8 @@ function projectPointToLine(pt0, pt1, pt) {
     return new Point(x, y);
 }
 
+const roundCoord = (coord, grid) => Math.round(coord / grid) * grid
+const roundPointX = (pt, grid) => new Point(Math.round(pt.x / grid) * grid, pt.y)
 const roundPointY = (pt, grid) => new Point(pt.x, Math.round(pt.y / grid) * grid)
 
 const softRoundPointY = (pt, grid) => {
@@ -31,4 +33,4 @@ const mapValue = (val, inMin, inMax, outMin, outMax, invert = false) => {
     return clamp(factor * outputRange + outMin, outMin, outMax)
 }
 
-export { lerp, clamp, mapValue, lerpPoints, projectPointToLine, roundPointY, softRoundPointY }
+export { lerp, clamp, mapValue, lerpPoints, projectPointToLine, roundCoord, roundPointX, roundPointY, softRoundPointY }
